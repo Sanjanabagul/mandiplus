@@ -8,7 +8,14 @@ import {
   RefreshCw,
   Search,
   X,
-  UploadCloud
+  UploadCloud,
+  MapPin,
+  Tag,
+  Layers,
+  Leaf,
+  Image as ImageIcon,
+  IndianRupee,
+  ShieldCheck
 } from 'lucide-react';
 import { sellerService } from '../../services/sellerService.js';
 import { ProduceGradingModal } from '../../components/ProduceGradingModal.jsx';
@@ -19,6 +26,7 @@ export const SellerProductsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAiGradingOpen, setIsAiGradingOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Form Fields
   const [name, setName] = useState('');
@@ -120,6 +128,7 @@ export const SellerProductsPage = () => {
       bulkPricingTiers: bulkTiers.length > 0 ? bulkTiers : undefined
     };
 
+    setIsSaving(true);
     try {
       if (editingProduct) {
         await sellerService.updateProduct(editingProduct._id, payload);
@@ -130,6 +139,8 @@ export const SellerProductsPage = () => {
       fetchProducts();
     } catch (err) {
       alert(err.response?.data?.message || 'Error saving product.');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -259,205 +270,361 @@ export const SellerProductsPage = () => {
 
       {/* ---------------- ADD / EDIT PRODUCE MODAL ---------------- */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700"
-            >
-              <X className="w-5 h-5" />
-            </button>
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex justify-center items-start sm:items-center p-3 sm:p-4 md:p-6 animate-fade-in">
+          {/* Backdrop click to close */}
+          <div className="fixed inset-0 -z-10" onClick={() => setIsModalOpen(false)} />
 
-            <h3 className="text-base font-bold text-mandi-navy mb-4">
-              {editingProduct ? 'Edit Produce Listing' : 'Add New Farm Produce'}
-            </h3>
-
-            <form onSubmit={handleSaveProduct} className="space-y-3 text-xs">
-              <div>
-                <label className="block text-gray-700 font-semibold mb-1">Produce Name *</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Nashik Red Onions (Export Quality)"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-mandi-blue focus:outline-none"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-gray-700 font-semibold mb-1">Category *</label>
-                  <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-mandi-blue focus:outline-none"
-                  >
-                    <option value="Vegetables">Vegetables</option>
-                    <option value="Fruits">Fruits</option>
-                    <option value="Grains">Grains</option>
-                    <option value="Pulses">Pulses</option>
-                    <option value="Spices">Spices</option>
-                    <option value="Organic Produce">Organic Produce</option>
-                    <option value="Bulk Deals">Bulk Deals</option>
-                    <option value="Dairy">Dairy</option>
-                  </select>
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl lg:max-w-3xl flex flex-col max-h-[92vh] sm:max-h-[88vh] overflow-hidden border border-gray-100 my-auto">
+            <form onSubmit={handleSaveProduct} className="flex flex-col h-full max-h-[92vh] sm:max-h-[88vh] overflow-hidden">
+              
+              {/* Sticky Modal Header */}
+              <div className="px-5 sm:px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-xl border border-emerald-100 shrink-0">
+                    🌾
+                  </div>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-bold text-mandi-navy">
+                      {editingProduct ? 'Edit Produce Listing' : 'Add New Farm Produce'}
+                    </h3>
+                    <p className="text-xs text-mandi-muted">
+                      List fresh harvest with transparent wholesale rates and quality grades
+                    </p>
+                  </div>
                 </div>
-
-                <div>
-                  <label className="block text-gray-700 font-semibold mb-1">Unit of Measurement *</label>
-                  <select
-                    value={unit}
-                    onChange={(e) => setUnit(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-mandi-blue focus:outline-none"
-                  >
-                    <option value="kg">kg (Kilogram)</option>
-                    <option value="quintal">quintal (100 kg)</option>
-                    <option value="crate">crate (20 kg standard)</option>
-                    <option value="tonne">tonne (1000 kg)</option>
-                    <option value="dozen">dozen</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-gray-700 font-semibold mb-1">Price per {unit} (₹) *</label>
-                  <input
-                    type="number"
-                    step="0.5"
-                    value={pricePerUnit}
-                    onChange={(e) => setPricePerUnit(e.target.value)}
-                    placeholder="28"
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-mandi-blue focus:outline-none"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-gray-700 font-semibold mb-1">Original Price (₹) (Optional)</label>
-                  <input
-                    type="number"
-                    step="0.5"
-                    value={originalPrice}
-                    onChange={(e) => setOriginalPrice(e.target.value)}
-                    placeholder="35 (for discount)"
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-mandi-blue focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-gray-700 font-semibold mb-1">Available Stock ({unit}) *</label>
-                  <input
-                    type="number"
-                    value={stockQuantity}
-                    onChange={(e) => setStockQuantity(e.target.value)}
-                    placeholder="2500"
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-mandi-blue focus:outline-none"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-gray-700 font-semibold mb-1">Min. Order Qty (MOQ) *</label>
-                  <input
-                    type="number"
-                    value={minOrderQuantity}
-                    onChange={(e) => setMinOrderQuantity(e.target.value)}
-                    placeholder="10"
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-mandi-blue focus:outline-none"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Quality Grade & AI button */}
-              <div className="pt-2">
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-gray-700 font-semibold">Quality Grade</label>
-                  <button
-                    type="button"
-                    onClick={() => setIsAiGradingOpen(true)}
-                    className="text-mandi-green font-bold flex items-center gap-1 hover:underline text-[11px]"
-                  >
-                    <Sparkles className="w-3.5 h-3.5 text-yellow-500" />
-                    <span>Run AI Quality Grading</span>
-                  </button>
-                </div>
-                <select
-                  value={qualityGrade}
-                  onChange={(e) => setQualityGrade(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-mandi-blue focus:outline-none"
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="p-2 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                  title="Close"
                 >
-                  <option value="Grade A">Grade A (Premium / Export Quality)</option>
-                  <option value="Grade B">Grade B (Standard Commercial Grade)</option>
-                  <option value="Grade C">Grade C (Processing / Economy)</option>
-                  <option value="FAQ">FAQ (Fair Average Quality)</option>
-                </select>
+                  <X className="w-5 h-5" />
+                </button>
               </div>
 
-              {/* Wholesale Tier Discount */}
-              <div className="bg-gray-50 p-3 rounded-xl border border-gray-200">
-                <label className="block text-gray-700 font-bold mb-1.5">Optional Wholesale Bulk Tier</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <input
-                    type="number"
-                    placeholder={`Min Qty (e.g. 50 ${unit})`}
-                    value={bulkTierQty}
-                    onChange={(e) => setBulkTierQty(e.target.value)}
-                    className="p-1.5 border border-gray-300 rounded text-xs"
-                  />
-                  <input
-                    type="number"
-                    placeholder={`Discounted Price ₹/${unit}`}
-                    value={bulkTierPrice}
-                    onChange={(e) => setBulkTierPrice(e.target.value)}
-                    className="p-1.5 border border-gray-300 rounded text-xs"
-                  />
+              {/* Scrollable Form Body */}
+              <div className="overflow-y-auto p-5 sm:p-6 space-y-5 custom-scrollbar flex-1 text-xs sm:text-sm">
+                
+                {/* Section 1: Basic Produce Information */}
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-1.5">
+                    <Tag className="w-3.5 h-3.5 text-mandi-green" />
+                    <span>Basic Harvest Details</span>
+                  </h4>
+
+                  <div className="space-y-3.5">
+                    <div>
+                      <label className="block text-gray-700 font-semibold mb-1 text-xs">
+                        Produce Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Nashik Red Onions (Export Quality)"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-mandi-blue/20 focus:border-mandi-blue focus:outline-none transition-all placeholder:text-gray-400"
+                        required
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      <div>
+                        <label className="block text-gray-700 font-semibold mb-1 text-xs">
+                          Category <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          value={category}
+                          onChange={(e) => setCategory(e.target.value)}
+                          className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-mandi-blue/20 focus:border-mandi-blue focus:outline-none transition-all bg-white"
+                        >
+                          <option value="Vegetables">Vegetables</option>
+                          <option value="Fruits">Fruits</option>
+                          <option value="Grains">Grains</option>
+                          <option value="Pulses">Pulses</option>
+                          <option value="Spices">Spices</option>
+                          <option value="Organic Produce">Organic Produce</option>
+                          <option value="Bulk Deals">Bulk Deals</option>
+                          <option value="Dairy">Dairy</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-gray-700 font-semibold mb-1 text-xs">
+                          Unit of Measurement <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          value={unit}
+                          onChange={(e) => setUnit(e.target.value)}
+                          className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-mandi-blue/20 focus:border-mandi-blue focus:outline-none transition-all bg-white"
+                        >
+                          <option value="kg">kg (Kilogram)</option>
+                          <option value="quintal">quintal (100 kg)</option>
+                          <option value="crate">crate (20 kg standard)</option>
+                          <option value="tonne">tonne (1000 kg)</option>
+                          <option value="dozen">dozen</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 2: Pricing & Stock Inventory */}
+                <div className="pt-3 border-t border-gray-100">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-1.5">
+                    <IndianRupee className="w-3.5 h-3.5 text-mandi-green" />
+                    <span>Pricing & Inventory</span>
+                  </h4>
+
+                  <div className="space-y-3.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      <div>
+                        <label className="block text-gray-700 font-semibold mb-1 text-xs">
+                          Selling Price per {unit} (₹) <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <span className="absolute left-3.5 top-2.5 text-gray-400 text-xs sm:text-sm font-semibold">₹</span>
+                          <input
+                            type="number"
+                            step="0.5"
+                            value={pricePerUnit}
+                            onChange={(e) => setPricePerUnit(e.target.value)}
+                            placeholder="28"
+                            className="w-full pl-8 pr-3.5 py-2.5 border border-gray-300 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-mandi-blue/20 focus:border-mandi-blue focus:outline-none font-semibold text-mandi-navy"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="block text-gray-700 font-semibold text-xs">Original / APMC Rate (₹)</label>
+                          {originalPrice && pricePerUnit && parseFloat(originalPrice) > parseFloat(pricePerUnit) && (
+                            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                              {Math.round(((parseFloat(originalPrice) - parseFloat(pricePerUnit)) / parseFloat(originalPrice)) * 100)}% OFF
+                            </span>
+                          )}
+                        </div>
+                        <div className="relative">
+                          <span className="absolute left-3.5 top-2.5 text-gray-400 text-xs sm:text-sm font-semibold">₹</span>
+                          <input
+                            type="number"
+                            step="0.5"
+                            value={originalPrice}
+                            onChange={(e) => setOriginalPrice(e.target.value)}
+                            placeholder="35 (optional for discount display)"
+                            className="w-full pl-8 pr-3.5 py-2.5 border border-gray-300 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-mandi-blue/20 focus:border-mandi-blue focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      <div>
+                        <label className="block text-gray-700 font-semibold mb-1 text-xs">
+                          Available Stock ({unit}) <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="number"
+                          value={stockQuantity}
+                          onChange={(e) => setStockQuantity(e.target.value)}
+                          placeholder="e.g. 2500"
+                          className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-mandi-blue/20 focus:border-mandi-blue focus:outline-none"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-gray-700 font-semibold mb-1 text-xs">
+                          Min. Order Qty (MOQ in {unit}) <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="number"
+                          value={minOrderQuantity}
+                          onChange={(e) => setMinOrderQuantity(e.target.value)}
+                          placeholder="e.g. 10"
+                          className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-mandi-blue/20 focus:border-mandi-blue focus:outline-none"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    {/* Wholesale Bulk Tier Card */}
+                    <div className="bg-emerald-50/50 border border-emerald-200/70 rounded-xl p-3.5">
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-gray-800 font-bold text-xs flex items-center gap-1.5">
+                          <Layers className="w-3.5 h-3.5 text-emerald-700" />
+                          <span>Wholesale Bulk Discount Tier (Optional)</span>
+                        </label>
+                        {bulkTierQty && bulkTierPrice && pricePerUnit && parseFloat(bulkTierPrice) < parseFloat(pricePerUnit) && (
+                          <span className="text-[10px] font-bold text-emerald-700 bg-white px-2 py-0.5 rounded-full border border-emerald-200">
+                            Bulk tier: {Math.round(((parseFloat(pricePerUnit) - parseFloat(bulkTierPrice)) / parseFloat(pricePerUnit)) * 100)}% cheaper
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-gray-500 mb-3">
+                        Encourage larger bulk orders from restaurants & kirana retailers with dedicated volume discounts.
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-gray-600 text-[11px] mb-1 font-medium">Qualifying Min. Qty ({unit})</label>
+                          <input
+                            type="number"
+                            placeholder={`e.g. 50 ${unit}`}
+                            value={bulkTierQty}
+                            onChange={(e) => setBulkTierQty(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-mandi-green"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-gray-600 text-[11px] mb-1 font-medium">Discounted Rate (₹/{unit})</label>
+                          <input
+                            type="number"
+                            step="0.5"
+                            placeholder={`e.g. ${pricePerUnit ? Math.round(parseFloat(pricePerUnit) * 0.9) : 25}`}
+                            value={bulkTierPrice}
+                            onChange={(e) => setBulkTierPrice(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-mandi-green"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 3: Quality Grading & Origin Details */}
+                <div className="pt-3 border-t border-gray-100">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-mandi-green" />
+                    <span>Quality Grade & Location</span>
+                  </h4>
+
+                  <div className="space-y-3.5">
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="block text-gray-700 font-semibold text-xs">Quality Grade</label>
+                        <button
+                          type="button"
+                          onClick={() => setIsAiGradingOpen(true)}
+                          className="text-emerald-700 font-bold flex items-center gap-1.5 hover:underline text-[11px] bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 transition-colors hover:bg-emerald-100"
+                        >
+                          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                          <span>Run AI Quality Grading</span>
+                        </button>
+                      </div>
+                      <select
+                        value={qualityGrade}
+                        onChange={(e) => setQualityGrade(e.target.value)}
+                        className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-mandi-blue/20 focus:border-mandi-blue focus:outline-none transition-all bg-white"
+                      >
+                        <option value="Grade A">Grade A (Premium / Export Quality)</option>
+                        <option value="Grade B">Grade B (Standard Commercial Grade)</option>
+                        <option value="Grade C">Grade C (Processing / Economy)</option>
+                        <option value="FAQ">FAQ (Fair Average Quality)</option>
+                      </select>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      <div>
+                        <label className="block text-gray-700 font-semibold mb-1 text-xs">
+                          Harvest / APMC Locality <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <MapPin className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
+                          <input
+                            type="text"
+                            value={pickupLocality}
+                            onChange={(e) => setPickupLocality(e.target.value)}
+                            placeholder="e.g. Nashik APMC / Dindori Farm"
+                            className="w-full pl-10 pr-3.5 py-2.5 border border-gray-300 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-mandi-blue/20 focus:border-mandi-blue focus:outline-none"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-gray-700 font-semibold mb-1 text-xs">Produce Photo URL (Optional)</label>
+                        <div className="flex items-center gap-2">
+                          <div className="relative flex-1">
+                            <ImageIcon className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
+                            <input
+                              type="text"
+                              placeholder="https://... or auto-fill via AI"
+                              value={imageUrl}
+                              onChange={(e) => setImageUrl(e.target.value)}
+                              className="w-full pl-10 pr-3.5 py-2.5 border border-gray-300 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-mandi-blue/20 focus:border-mandi-blue focus:outline-none"
+                            />
+                          </div>
+                          {imageUrl && (
+                            <img
+                              src={imageUrl}
+                              alt="Preview"
+                              className="w-10 h-10 rounded-xl object-cover border border-gray-200 shrink-0"
+                              onError={(e) => { e.target.style.display = 'none'; }}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-700 font-semibold mb-1 text-xs">Produce Description (Optional)</label>
+                      <textarea
+                        rows="2"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder="e.g. Freshly harvested this morning, uniform shape, stored in climate-controlled crates."
+                        className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-xs sm:text-sm focus:ring-2 focus:ring-mandi-blue/20 focus:border-mandi-blue focus:outline-none"
+                      />
+                    </div>
+
+                    {/* Certified Organic toggle card */}
+                    <label className="flex items-center gap-3 p-3.5 rounded-xl border border-emerald-200/80 bg-emerald-50/40 hover:bg-emerald-50/80 transition-colors cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={isOrganic}
+                        onChange={(e) => setIsOrganic(e.target.checked)}
+                        className="w-4 h-4 rounded text-mandi-green focus:ring-mandi-green"
+                      />
+                      <div className="flex items-center gap-2">
+                        <Leaf className="w-4 h-4 text-emerald-700 shrink-0" />
+                        <div>
+                          <span className="font-bold text-xs text-gray-800">Certified Organic & Chemical-Free</span>
+                          <span className="text-[11px] text-gray-500 block">Highlights your listing with a verified organic green badge</span>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-gray-700 font-semibold mb-1">Produce Image URL</label>
-                <input
-                  type="text"
-                  placeholder="https://... or upload through AI grading"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-mandi-blue focus:outline-none"
-                />
+              {/* Sticky Modal Footer */}
+              <div className="px-5 sm:px-6 py-3.5 border-t border-gray-100 bg-gray-50/90 flex items-center justify-between gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-xs sm:text-sm font-semibold hover:bg-gray-100 transition-colors"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="px-6 py-2.5 rounded-xl bg-mandi-green hover:bg-mandi-green-dark text-white text-xs sm:text-sm font-bold flex items-center gap-2 shadow-sm transition-all disabled:opacity-50"
+                >
+                  {isSaving ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      <span>Saving Listing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>{editingProduct ? 'Update Produce Listing' : 'Publish Produce Listing'}</span>
+                    </>
+                  )}
+                </button>
               </div>
-
-              <div>
-                <label className="block text-gray-700 font-semibold mb-1">Harvest Locality *</label>
-                <input
-                  type="text"
-                  value={pickupLocality}
-                  onChange={(e) => setPickupLocality(e.target.value)}
-                  placeholder="e.g. Nashik APMC / Dindori Farm"
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-mandi-blue focus:outline-none"
-                  required
-                />
-              </div>
-
-              <label className="flex items-center gap-2 cursor-pointer text-gray-700">
-                <input
-                  type="checkbox"
-                  checked={isOrganic}
-                  onChange={(e) => setIsOrganic(e.target.checked)}
-                  className="rounded text-mandi-green"
-                />
-                <span>Certified Organic Chemical-Free Produce</span>
-              </label>
-
-              <button
-                type="submit"
-                className="w-full bg-mandi-green hover:bg-mandi-green-dark text-white font-bold py-2.5 rounded-xl transition-colors mt-2"
-              >
-                {editingProduct ? 'Update Listing' : 'Publish Produce Listing'}
-              </button>
             </form>
           </div>
         </div>
