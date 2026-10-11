@@ -66,6 +66,20 @@ const apiLimiter = rateLimit({
 });
 app.use('/api', apiLimiter);
 
+// Database connection assurance middleware (for serverless environments like Vercel)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    logger.error('Database connection error in request lifecycle:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Database connection failed. Please ensure MONGODB_URI is configured correctly.'
+    });
+  }
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.status(200).json({
