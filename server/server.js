@@ -36,9 +36,33 @@ app.use(helmet({
   crossOriginResourcePolicy: false // Allows serving local uploaded produce images
 }));
 
+// Permissive and resilient CORS configuration
+const cleanClientUrl = config.clientUrl ? config.clientUrl.replace(/\/+$/, '') : '';
+
 app.use(cors({
-  origin: config.clientUrl || '*',
-  credentials: true
+  origin: (origin, callback) => {
+    // Allow non-browser requests (mobile, server-to-server, curl)
+    if (!origin) return callback(null, true);
+
+    const normalizedOrigin = origin.replace(/\/+$/, '');
+    
+    // Allow if matched, localhost, or any vercel.app deployment
+    if (
+      !cleanClientUrl ||
+      cleanClientUrl === '*' ||
+      normalizedOrigin === cleanClientUrl ||
+      normalizedOrigin.endsWith('.vercel.app') ||
+      normalizedOrigin.includes('localhost')
+    ) {
+      return callback(null, true);
+    }
+
+    // Default to allow the request origin to prevent blocking
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 // Request logging in development
@@ -66,7 +90,7 @@ const apiLimiter = rateLimit({
 });
 app.use('/api', apiLimiter);
 
-// Database connection assurance middleware (for serverless environments like Vercel)
+// Database connection assurance middleware (for serverless environments like Vercel/Render)
 app.use(async (req, res, next) => {
   try {
     await connectDB();
@@ -80,30 +104,37 @@ app.use(async (req, res, next) => {
   }
 });
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
+// Health check endpoints
+const handleHealthCheck = (req, res) => {
   res.status(200).json({
     status: 'online',
     platform: 'Mandi+ Agri-Commerce API',
     uptime: process.uptime(),
     timestamp: new Date().toISOString()
   });
-});
+};
+app.get('/api/health', handleHealthCheck);
+app.get('/health', handleHealthCheck);
 
-// Mount modular API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/categories', categoryRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/wishlist', wishlistRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/seller', sellerRoutes);
-app.use('/api/delivery', deliveryRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/ai', aiRoutes);
-app.use('/api/notifications', notificationRoutes);
-app.use('/api/reviews', reviewRoutes);
-app.use('/api/reports', reportRoutes);
+// Mount modular API routes under both /api and root /
+const mountRoutes = (prefix = '') => {
+  app.use(`${prefix}/auth`, authRoutes);
+  app.use(`${prefix}/products`, productRoutes);
+  app.use(`${prefix}/categories`, categoryRoutes);
+  app.use(`${prefix}/cart`, cartRoutes);
+  app.use(`${prefix}/wishlist`, wishlistRoutes);
+  app.use(`${prefix}/orders`, orderRoutes);
+  app.use(`${prefix}/seller`, sellerRoutes);
+  app.use(`${prefix}/delivery`, deliveryRoutes);
+  app.use(`${prefix}/admin`, adminRoutes);
+  app.use(`${prefix}/ai`, aiRoutes);
+  app.use(`${prefix}/notifications`, notificationRoutes);
+  app.use(`${prefix}/reviews`, reviewRoutes);
+  app.use(`${prefix}/reports`, reportRoutes);
+};
+
+mountRoutes('/api');
+mountRoutes('');
 
 // 404 handler for unknown endpoints
 app.use((req, res) => {
