@@ -41,13 +41,15 @@ export const runSeed = async () => {
             throw createErr;
           }
         }
-      } else {
         Object.assign(existingUser, {
           name: userData.name,
           role: userData.role,
           phone: userData.phone,
           businessName: userData.businessName,
           locality: userData.locality,
+          status: userData.status || 'active',
+          approvalStatus: userData.approvalStatus || (userData.role === 'buyer' || userData.role === 'admin' ? 'not_required' : 'approved'),
+          isActive: userData.isActive !== undefined ? userData.isActive : true,
           sellerProfile: userData.sellerProfile || existingUser.sellerProfile,
           deliveryProfile: userData.deliveryProfile || existingUser.deliveryProfile
         });

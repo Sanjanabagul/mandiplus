@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Lock, Mail, AlertCircle, ArrowRight, ShieldCheck, UserCheck } from 'lucide-react';
+import { Lock, Mail, AlertCircle, ArrowRight, ShieldCheck, Clock, Shield } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export const LoginPage = () => {
@@ -13,6 +13,7 @@ export const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isPendingOrRejected, setIsPendingOrRejected] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,23 +21,28 @@ export const LoginPage = () => {
 
     setLoading(true);
     setErrorMessage('');
+    setIsPendingOrRejected(false);
 
     try {
-      const res = await login(email, password);
+      const res = await login(email.trim().toLowerCase(), password);
       if (res.success) {
-        if (res.user.role === 'seller') navigate('/seller/dashboard');
+        if (res.user.role === 'seller' || res.user.role === 'farmer') navigate('/seller/dashboard');
         else if (res.user.role === 'admin') navigate('/admin/dashboard');
         else if (res.user.role === 'delivery') navigate('/delivery/dashboard');
         else navigate(redirect);
       }
     } catch (err) {
-      setErrorMessage(err.response?.data?.message || 'Login failed. Please verify credentials.');
+      const msg = err.response?.data?.message || 'Login failed. Please verify credentials.';
+      setErrorMessage(msg);
+      if (msg.includes('awaiting admin approval') || msg.includes('has been rejected') || msg.includes('pending')) {
+        setIsPendingOrRejected(true);
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const fillDemoAccount = (demoEmail, demoRole) => {
+  const fillDemoAccount = (demoEmail) => {
     setEmail(demoEmail);
     setPassword('Password123!');
   };
@@ -57,9 +63,22 @@ export const LoginPage = () => {
         </div>
 
         {errorMessage && (
-          <div className="p-3 bg-red-50 text-red-700 rounded-xl text-xs mb-4 flex items-center gap-2 border border-red-200">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>{errorMessage}</span>
+          <div className="p-3 bg-red-50 text-red-700 rounded-xl text-xs mb-4 border border-red-200 space-y-2">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{errorMessage}</span>
+            </div>
+            {isPendingOrRejected && (
+              <div className="pt-1 border-t border-red-200/60">
+                <Link
+                  to={`/application-status?email=${encodeURIComponent(email.trim().toLowerCase())}`}
+                  className="font-bold underline hover:text-red-900 inline-flex items-center gap-1"
+                >
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>Check your application status details</span>
+                </Link>
+              </div>
+            )}
           </div>
         )}
 
@@ -97,17 +116,42 @@ export const LoginPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-mandi-blue hover:bg-mandi-blue-dark disabled:bg-gray-200 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 transition-colors shadow-sm mt-2"
+            className="w-full bg-mandi-blue hover:bg-mandi-blue-dark disabled:bg-gray-200 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 transition-colors shadow-sm mt-2 cursor-pointer"
           >
             {loading ? <span>Authenticating...</span> : <span>Sign In</span>}
           </button>
         </form>
 
-        <div className="text-center text-xs text-gray-500 mt-4">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-mandi-blue font-bold hover:underline">
-            Register here
-          </Link>
+        <div className="text-center text-xs text-gray-500 mt-4 space-y-1">
+          <div>
+            Don't have an account?{' '}
+            <Link to="/register" className="text-mandi-blue font-bold hover:underline">
+              Register here
+            </Link>
+          </div>
+          <div>
+            Applied as Farmer or Delivery Fleet?{' '}
+            <Link to="/application-status" className="text-gray-700 font-semibold hover:text-mandi-blue hover:underline">
+              Check Application Status
+            </Link>
+          </div>
+          <div className="pt-3 border-t border-gray-100 mt-3">
+            <Link
+              to="/admin/login"
+              className="w-full bg-slate-50 hover:bg-blue-50/60 border border-slate-200 hover:border-blue-300 text-slate-800 font-semibold py-2.5 px-3 rounded-xl flex items-center justify-between text-xs transition-colors group shadow-2xs"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold shrink-0 shadow-sm">
+                  <Shield className="w-4 h-4" />
+                </div>
+                <div className="text-left">
+                  <span className="font-bold text-gray-900 block leading-tight">Mandi+ Administrator?</span>
+                  <span className="text-[10px] text-gray-500 block leading-tight">Access Secure Admin Portal & Applications Review</span>
+                </div>
+              </div>
+              <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+            </Link>
+          </div>
         </div>
 
         {/* Quick Demo Credentials Panel for Pair Programming / Review */}
@@ -118,32 +162,32 @@ export const LoginPage = () => {
 
           <div className="grid grid-cols-2 gap-2 text-[11px]">
             <button
-              onClick={() => fillDemoAccount('buyer@mandiplus.com', 'buyer')}
-              className="p-2 rounded-lg border border-gray-200 hover:border-mandi-blue hover:bg-blue-50/50 text-left transition-colors"
+              onClick={() => fillDemoAccount('buyer@mandiplus.com')}
+              className="p-2 rounded-lg border border-gray-200 hover:border-mandi-blue hover:bg-blue-50/50 text-left transition-colors cursor-pointer"
             >
               <div className="font-bold text-mandi-navy">🛒 Retail Buyer</div>
               <div className="text-gray-400 text-[10px]">buyer@mandiplus.com</div>
             </button>
 
             <button
-              onClick={() => fillDemoAccount('farmer@mandiplus.com', 'seller')}
-              className="p-2 rounded-lg border border-gray-200 hover:border-mandi-green hover:bg-green-50/50 text-left transition-colors"
+              onClick={() => fillDemoAccount('farmer@mandiplus.com')}
+              className="p-2 rounded-lg border border-gray-200 hover:border-mandi-green hover:bg-green-50/50 text-left transition-colors cursor-pointer"
             >
               <div className="font-bold text-mandi-green">🌾 Farmer Seller</div>
               <div className="text-gray-400 text-[10px]">farmer@mandiplus.com</div>
             </button>
 
             <button
-              onClick={() => fillDemoAccount('delivery@mandiplus.com', 'delivery')}
-              className="p-2 rounded-lg border border-gray-200 hover:border-amber-500 hover:bg-amber-50/50 text-left transition-colors"
+              onClick={() => fillDemoAccount('delivery@mandiplus.com')}
+              className="p-2 rounded-lg border border-gray-200 hover:border-amber-500 hover:bg-amber-50/50 text-left transition-colors cursor-pointer"
             >
               <div className="font-bold text-amber-700">🚚 Delivery Fleet</div>
               <div className="text-gray-400 text-[10px]">delivery@mandiplus.com</div>
             </button>
 
             <button
-              onClick={() => fillDemoAccount('admin@mandiplus.com', 'admin')}
-              className="p-2 rounded-lg border border-gray-200 hover:border-red-500 hover:bg-red-50/50 text-left transition-colors"
+              onClick={() => fillDemoAccount('admin@mandiplus.com')}
+              className="p-2 rounded-lg border border-gray-200 hover:border-red-500 hover:bg-red-50/50 text-left transition-colors cursor-pointer"
             >
               <div className="font-bold text-red-600">🛡️ Administrator</div>
               <div className="text-gray-400 text-[10px]">admin@mandiplus.com</div>

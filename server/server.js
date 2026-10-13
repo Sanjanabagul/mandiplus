@@ -154,6 +154,14 @@ const startServer = async () => {
   try {
     await connectDB();
 
+    // Ensure initial administrator is provisioned in the active database
+    try {
+      const { seedAdmin } = await import('./src/seeds/seedAdmin.js');
+      await seedAdmin();
+    } catch (adminErr) {
+      logger.warn('[AdminProvisioning] Auto-provision check notice:', adminErr.message);
+    }
+
     // Check if database is empty and auto-seed initial demo catalog
     const { Product } = await import('./src/models/Product.js');
     const count = await Product.countDocuments();

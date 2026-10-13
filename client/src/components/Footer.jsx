@@ -105,6 +105,12 @@ export const Footer = () => {
               <li><Link to="/orders" className="hover:text-white transition-colors">Track Active Orders</Link></li>
               <li><Link to="/profile" className="hover:text-white transition-colors">Manage Delivery Addresses</Link></li>
               <li><Link to="/cart" className="hover:text-white transition-colors">Shopping Cart</Link></li>
+              <li>
+                <Link to="/admin/login" className="text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1.5 font-medium mt-1">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>Admin Portal</span>
+                </Link>
+              </li>
               <li className="flex items-center gap-1.5 text-gray-400 mt-2">
                 <Phone className="w-3.5 h-3.5 text-yellow-400" />
                 <span>+91 1800-MANDI-PLUS</span>

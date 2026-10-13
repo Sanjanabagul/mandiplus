@@ -1,6 +1,7 @@
 import { User } from '../models/User.js';
 import { Product } from '../models/Product.js';
 import { Order } from '../models/Order.js';
+import { AuditLog } from '../models/AuditLog.js';
 
 export const getAdminDashboard = async (req, res, next) => {
   try {
@@ -9,14 +10,24 @@ export const getAdminDashboard = async (req, res, next) => {
       totalBuyers,
       totalSellers,
       totalDeliveryPartners,
+      pendingFarmerApplications,
+      pendingDeliveryApplications,
+      approvedFarmers,
+      approvedDeliveryPartners,
+      rejectedApplications,
       totalProducts,
       pendingApprovalProducts,
       orders
     ] = await Promise.all([
       User.countDocuments(),
       User.countDocuments({ role: 'buyer' }),
-      User.countDocuments({ role: 'seller' }),
+      User.countDocuments({ role: { $in: ['seller', 'farmer'] } }),
       User.countDocuments({ role: 'delivery' }),
+      User.countDocuments({ role: { $in: ['seller', 'farmer'] }, approvalStatus: 'pending' }),
+      User.countDocuments({ role: 'delivery', approvalStatus: 'pending' }),
+      User.countDocuments({ role: { $in: ['seller', 'farmer'] }, approvalStatus: 'approved' }),
+      User.countDocuments({ role: 'delivery', approvalStatus: 'approved' }),
+      User.countDocuments({ approvalStatus: 'rejected' }),
       Product.countDocuments(),
       Product.countDocuments({ approvalStatus: 'pending' }),
       Order.find().lean()
@@ -37,6 +48,14 @@ export const getAdminDashboard = async (req, res, next) => {
       .limit(6)
       .lean();
 
+    const recentApplications = await User.find({
+      role: { $in: ['farmer', 'seller', 'delivery'] }
+    })
+      .select('-password')
+      .sort({ createdAt: -1 })
+      .limit(6)
+      .lean();
+
     return res.status(200).json({
       success: true,
       stats: {
@@ -44,6 +63,12 @@ export const getAdminDashboard = async (req, res, next) => {
         totalBuyers,
         totalSellers,
         totalDeliveryPartners,
+        pendingFarmerApplications,
+        pendingDeliveryApplications,
+        approvedFarmers,
+        approvedDeliveryPartners,
+        rejectedApplications,
+        totalPendingApplications: pendingFarmerApplications + pendingDeliveryApplications,
         totalProducts,
         pendingApprovalProducts,
         totalOrders: orders.length,
@@ -51,7 +76,269 @@ export const getAdminDashboard = async (req, res, next) => {
         pendingOrdersCount,
         totalGMV
       },
-      recentOrders
+      recentOrders,
+      recentApplications
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getAdminDashboardStats = getAdminDashboard;
+
+export const getAdminApplications = async (req, res, next) => {
+  try {
+    const { role, status, search, page = 1, limit = 15 } = req.query;
+    const query = {
+      role: { $in: ['farmer', 'seller', 'delivery'] }
+    };
+
+    if (role && role !== 'all') {
+      if (role === 'farmer' || role === 'seller') {
+        query.role = { $in: ['farmer', 'seller'] };
+      } else {
+        query.role = role;
+      }
+    }
+
+    if (status && status !== 'all') {
+      query.approvalStatus = status;
+    }
+
+    if (search && search.trim()) {
+      const searchRegex = { $regex: search.trim(), $options: 'i' };
+      query.$or = [
+        { name: searchRegex },
+        { email: searchRegex },
+        { phone: searchRegex },
+        { businessName: searchRegex },
+        { locality: searchRegex }
+      ];
+    }
+
+    const pageNum = parseInt(page, 10) || 1;
+    const limitNum = parseInt(limit, 10) || 15;
+    const skip = (pageNum - 1) * limitNum;
+
+    const [applications, total] = await Promise.all([
+      User.find(query)
+        .select('-password')
+        .populate('approvedBy', 'name email')
+        .populate('rejectedBy', 'name email')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limitNum)
+        .lean(),
+      User.countDocuments(query)
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      applications,
+      total,
+      currentPage: pageNum,
+      totalPages: Math.ceil(total / limitNum)
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getFarmerApplications = async (req, res, next) => {
+  req.query.role = 'farmer';
+  return getAdminApplications(req, res, next);
+};
+
+export const getDeliveryApplications = async (req, res, next) => {
+  req.query.role = 'delivery';
+  return getAdminApplications(req, res, next);
+};
+
+export const getAdminApplicationById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const application = await User.findById(id)
+      .select('-password')
+      .populate('approvedBy', 'name email')
+      .populate('rejectedBy', 'name email')
+      .lean();
+
+    if (!application || !['farmer', 'seller', 'delivery'].includes(application.role)) {
+      return res.status(404).json({
+        success: false,
+        message: 'Application not found.'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      application
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const approveApplication = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const targetUser = await User.findById(id);
+    if (!targetUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'Application not found.'
+      });
+    }
+
+    if (!['farmer', 'seller', 'delivery'].includes(targetUser.role)) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot approve account with role '${targetUser.role}'. Only farmer and delivery applications require approval.`
+      });
+    }
+
+    if (targetUser.approvalStatus === 'approved') {
+      return res.status(409).json({
+        success: false,
+        message: 'This application has already been approved.'
+      });
+    }
+
+    if (targetUser.approvalStatus === 'rejected') {
+      return res.status(400).json({
+        success: false,
+        message: 'Rejected applications cannot be approved directly.'
+      });
+    }
+
+    const previousStatus = targetUser.approvalStatus;
+    targetUser.approvalStatus = 'approved';
+    targetUser.isActive = true;
+    targetUser.status = 'active';
+    targetUser.approvedAt = new Date();
+    targetUser.approvedBy = req.user._id;
+    targetUser.rejectionReason = '';
+
+    if (['farmer', 'seller'].includes(targetUser.role) && targetUser.sellerProfile) {
+      targetUser.sellerProfile.verified = true;
+    }
+
+    await targetUser.save();
+
+    await AuditLog.create({
+      user: req.user._id,
+      action: 'APPLICATION_APPROVED',
+      entityType: 'User',
+      entityId: targetUser._id.toString(),
+      details: {
+        applicantName: targetUser.name,
+        applicantEmail: targetUser.email,
+        role: targetUser.role,
+        previousStatus,
+        newStatus: 'approved'
+      },
+      ipAddress: req.ip || ''
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `${targetUser.role === 'delivery' ? 'Delivery partner' : 'Farmer'} application approved successfully.`,
+      application: {
+        id: targetUser._id,
+        name: targetUser.name,
+        email: targetUser.email,
+        role: targetUser.role,
+        approvalStatus: targetUser.approvalStatus,
+        isActive: targetUser.isActive,
+        approvedAt: targetUser.approvedAt
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const rejectApplication = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { rejectionReason } = req.body;
+
+    if (!rejectionReason || !rejectionReason.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'A rejection reason is required.'
+      });
+    }
+
+    const targetUser = await User.findById(id);
+    if (!targetUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'Application not found.'
+      });
+    }
+
+    if (!['farmer', 'seller', 'delivery'].includes(targetUser.role)) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot reject account with role '${targetUser.role}'. Only farmer and delivery applications can be processed.`
+      });
+    }
+
+    if (targetUser.approvalStatus === 'approved') {
+      return res.status(400).json({
+        success: false,
+        message: 'Approved accounts cannot be rejected via pending application workflow.'
+      });
+    }
+
+    if (targetUser.approvalStatus === 'rejected') {
+      return res.status(409).json({
+        success: false,
+        message: 'This application has already been rejected.'
+      });
+    }
+
+    const previousStatus = targetUser.approvalStatus;
+    targetUser.approvalStatus = 'rejected';
+    targetUser.isActive = false;
+    targetUser.status = 'suspended';
+    targetUser.rejectedAt = new Date();
+    targetUser.rejectedBy = req.user._id;
+    targetUser.rejectionReason = rejectionReason.trim();
+
+    await targetUser.save();
+
+    await AuditLog.create({
+      user: req.user._id,
+      action: 'APPLICATION_REJECTED',
+      entityType: 'User',
+      entityId: targetUser._id.toString(),
+      details: {
+        applicantName: targetUser.name,
+        applicantEmail: targetUser.email,
+        role: targetUser.role,
+        previousStatus,
+        newStatus: 'rejected',
+        rejectionReason: rejectionReason.trim()
+      },
+      ipAddress: req.ip || ''
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `${targetUser.role === 'delivery' ? 'Delivery partner' : 'Farmer'} application rejected successfully.`,
+      application: {
+        id: targetUser._id,
+        name: targetUser.name,
+        email: targetUser.email,
+        role: targetUser.role,
+        approvalStatus: targetUser.approvalStatus,
+        isActive: targetUser.isActive,
+        rejectedAt: targetUser.rejectedAt,
+        rejectionReason: targetUser.rejectionReason
+      }
     });
   } catch (err) {
     next(err);

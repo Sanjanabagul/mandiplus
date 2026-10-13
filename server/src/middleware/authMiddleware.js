@@ -26,11 +26,32 @@ export const protect = async (req, res, next) => {
       });
     }
 
-    if (user.status === 'suspended') {
+    if (user.status === 'suspended' || user.isActive === false) {
       return res.status(403).json({
         success: false,
-        message: 'Your account has been suspended. Please contact support.'
+        message: 'Your account is currently inactive or has been suspended. Please contact Mandi+ support.'
       });
+    }
+
+    if (['farmer', 'seller', 'delivery'].includes(user.role)) {
+      if (user.approvalStatus === 'pending') {
+        return res.status(403).json({
+          success: false,
+          message: `Access denied. Your ${user.role} account is awaiting administrator approval.`
+        });
+      }
+      if (user.approvalStatus === 'rejected') {
+        return res.status(403).json({
+          success: false,
+          message: `Access denied. Your ${user.role} application was rejected.`
+        });
+      }
+      if (user.approvalStatus !== 'approved') {
+        return res.status(403).json({
+          success: false,
+          message: `Access denied. Your ${user.role} account has not been approved.`
+        });
+      }
     }
 
     req.user = user;
@@ -42,6 +63,8 @@ export const protect = async (req, res, next) => {
     });
   }
 };
+
+export const authenticateUser = protect;
 
 export const optionalProtect = async (req, res, next) => {
   let token;
@@ -57,7 +80,7 @@ export const optionalProtect = async (req, res, next) => {
   try {
     const decoded = verifyToken(token);
     const user = await User.findById(decoded.id).select('-password');
-    req.user = user && user.status !== 'suspended' ? user : null;
+    req.user = user && user.status !== 'suspended' && user.isActive !== false ? user : null;
   } catch {
     req.user = null;
   }

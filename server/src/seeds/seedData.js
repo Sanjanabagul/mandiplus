@@ -101,6 +101,8 @@ export const usersSeed = [
     businessName: 'Sahyadri Agro Farms',
     locality: 'Nashik APMC',
     status: 'active',
+    approvalStatus: 'approved',
+    isActive: true,
     sellerProfile: {
       verified: true,
       farmLocation: 'Dindori, Nashik, Maharashtra',
@@ -129,6 +131,8 @@ export const usersSeed = [
     businessName: 'Krishna Valley Organic Produce',
     locality: 'Pune Market Yard',
     status: 'active',
+    approvalStatus: 'approved',
+    isActive: true,
     sellerProfile: {
       verified: true,
       farmLocation: 'Baramati, Pune, Maharashtra',
@@ -157,6 +161,8 @@ export const usersSeed = [
     businessName: 'Annapurna Bhojanalaya & Retail',
     locality: 'Kothrud, Pune',
     status: 'active',
+    approvalStatus: 'not_required',
+    isActive: true,
     addresses: [{
       fullName: 'Suresh Sharma',
       phone: '+91 98901 77889',
@@ -178,6 +184,8 @@ export const usersSeed = [
     businessName: 'Kisan Express Logistics',
     locality: 'Pune & Pimpri-Chinchwad',
     status: 'active',
+    approvalStatus: 'approved',
+    isActive: true,
     deliveryProfile: {
       vehicleType: 'Tata Ace Mini Truck',
       vehicleNumber: 'MH-12-AQ-8899',
@@ -194,7 +202,9 @@ export const usersSeed = [
     role: 'admin',
     businessName: 'Mandi+ Central Operations',
     locality: 'Mumbai HQ',
-    status: 'active'
+    status: 'active',
+    approvalStatus: 'not_required',
+    isActive: true
   }
 ];
 

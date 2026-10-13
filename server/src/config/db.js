@@ -28,10 +28,10 @@ export const connectDB = async () => {
   }
 
   try {
-    // Attempt connecting to the configured MongoDB URI with a fast timeout
+    // Attempt connecting to the configured MongoDB URI with reasonable timeout for Atlas
     console.log(`[MongoDB] Attempting connection to: ${config.mongodbUri}...`);
     await mongoose.connect(config.mongodbUri, {
-      serverSelectionTimeoutMS: 3000,
+      serverSelectionTimeoutMS: 10000,
     });
     console.log(`[MongoDB] Successfully connected to MongoDB at ${config.mongodbUri}`);
     saveActiveUri(config.mongodbUri);

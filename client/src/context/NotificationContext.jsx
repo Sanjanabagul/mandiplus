@@ -18,7 +18,9 @@ export const NotificationProvider = ({ children }) => {
           setUnreadCount(res.data.unreadCount || 0);
         }
       } catch (err) {
-        console.error('Failed to load notifications:', err);
+        if (err.response?.status !== 401) {
+          console.error('Failed to load notifications:', err);
+        }
       }
     }
   };

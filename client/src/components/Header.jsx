@@ -308,6 +308,16 @@ export const Header = () => {
             )}
           </Link>
 
+          {/* Admin Portal Header Shortcut */}
+          <Link
+            to={isAdmin ? "/admin/dashboard" : "/admin/login"}
+            className="hidden md:flex items-center gap-1.5 bg-blue-800/80 hover:bg-blue-900 border border-blue-400/30 text-white font-medium px-2.5 py-1.5 rounded text-xs transition-colors shrink-0 shadow-sm"
+            title="Mandi+ Administrator Console"
+          >
+            <ShieldAlert className="w-3.5 h-3.5 text-yellow-300 shrink-0" />
+            <span>Admin Portal</span>
+          </Link>
+
           {/* 8. Account Dropdown / Login */}
           <div ref={accountRef} className="relative shrink-0">
             {isAuthenticated ? (

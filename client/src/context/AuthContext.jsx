@@ -41,6 +41,17 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
+  const adminLogin = async (email, password) => {
+    const data = await authService.adminLogin(email, password);
+    if (data.success && data.token) {
+      setToken(data.token);
+      setUser(data.user);
+      localStorage.setItem('mandi_token', data.token);
+      localStorage.setItem('mandi_user', JSON.stringify(data.user));
+    }
+    return data;
+  };
+
   const register = async (userData) => {
     const data = await authService.register(userData);
     if (data.success && data.token) {
@@ -74,14 +85,17 @@ export const AuthProvider = ({ children }) => {
       token,
       loading,
       login,
+      adminLogin,
       register,
       logout,
       updateProfile,
-      isAuthenticated: !!token && !!user,
+      isAuthenticated: !loading && !!token && !!user,
       isBuyer: user?.role === 'buyer',
-      isSeller: user?.role === 'seller',
+      isSeller: user?.role === 'seller' || user?.role === 'farmer',
+      isFarmer: user?.role === 'farmer' || user?.role === 'seller',
       isAdmin: user?.role === 'admin',
-      isDelivery: user?.role === 'delivery'
+      isDelivery: user?.role === 'delivery',
+      isApproved: user?.approvalStatus === 'approved' || user?.approvalStatus === 'not_required'
     }}>
       {children}
     </AuthContext.Provider>

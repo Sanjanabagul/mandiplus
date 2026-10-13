@@ -36,7 +36,9 @@ export const CartProvider = ({ children }) => {
           setSavingsTotal(data.savingsTotal || 0);
         }
       } catch (err) {
-        console.error('Failed to load cart:', err);
+        if (err.response?.status !== 401) {
+          console.error('Failed to load cart:', err);
+        }
       } finally {
         setLoading(false);
       }

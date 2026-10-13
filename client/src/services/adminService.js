@@ -6,6 +6,41 @@ export const adminService = {
     return res.data;
   },
 
+  getDashboardStats: async () => {
+    const res = await api.get('/admin/dashboard/stats');
+    return res.data;
+  },
+
+  getApplications: async (params = {}) => {
+    const res = await api.get('/admin/applications', { params });
+    return res.data;
+  },
+
+  getApplicationById: async (id) => {
+    const res = await api.get(`/admin/applications/${id}`);
+    return res.data;
+  },
+
+  getFarmerApplications: async (params = {}) => {
+    const res = await api.get('/admin/applications/farmers', { params });
+    return res.data;
+  },
+
+  getDeliveryApplications: async (params = {}) => {
+    const res = await api.get('/admin/applications/delivery', { params });
+    return res.data;
+  },
+
+  approveApplication: async (id) => {
+    const res = await api.patch(`/admin/applications/${id}/approve`);
+    return res.data;
+  },
+
+  rejectApplication: async (id, rejectionReason) => {
+    const res = await api.patch(`/admin/applications/${id}/reject`, { rejectionReason });
+    return res.data;
+  },
+
   getUsers: async (params = {}) => {
     const res = await api.get('/admin/users', { params });
     return res.data;

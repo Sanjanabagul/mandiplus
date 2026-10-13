@@ -29,6 +29,11 @@ const userSchema = new mongoose.Schema({
     trim: true,
     match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email address']
   },
+  normalizedEmail: {
+    type: String,
+    lowercase: true,
+    trim: true
+  },
   password: {
     type: String,
     required: [true, 'Please provide a password'],
@@ -43,10 +48,51 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: {
-      values: ['buyer', 'seller', 'delivery', 'admin'],
+      values: ['buyer', 'seller', 'farmer', 'delivery', 'admin'],
       message: '{VALUE} is not a valid user role'
     },
     default: 'buyer'
+  },
+  approvalStatus: {
+    type: String,
+    enum: ['not_required', 'pending', 'approved', 'rejected'],
+    default: function () {
+      if (this.role === 'buyer' || this.role === 'admin') return 'not_required';
+      return 'pending';
+    }
+  },
+  isActive: {
+    type: Boolean,
+    default: function () {
+      if (this.role === 'buyer' || this.role === 'admin') return true;
+      return false;
+    }
+  },
+  approvedAt: {
+    type: Date,
+    default: null
+  },
+  approvedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
+  rejectedAt: {
+    type: Date,
+    default: null
+  },
+  rejectedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
+  rejectionReason: {
+    type: String,
+    default: ''
+  },
+  submittedAt: {
+    type: Date,
+    default: Date.now
   },
   businessName: {
     type: String,
@@ -93,11 +139,16 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for role lookups
+// Indexes for fast lookup and uniqueness enforcement
 userSchema.index({ role: 1 });
+userSchema.index({ normalizedEmail: 1 }, { unique: true });
+userSchema.index({ approvalStatus: 1, role: 1 });
 
-// Password hashing middleware
+// Password hashing and email normalization middleware
 userSchema.pre('save', async function (next) {
+  if (this.email) {
+    this.normalizedEmail = this.email.trim().toLowerCase();
+  }
   if (!this.isModified('password')) return next();
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);

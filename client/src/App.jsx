@@ -30,6 +30,7 @@ import { ProfilePage } from './pages/ProfilePage.jsx';
 import { ProcurementAssistantPage } from './pages/ProcurementAssistantPage.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { RegisterPage } from './pages/RegisterPage.jsx';
+import { ApplicationStatusPage } from './pages/ApplicationStatusPage.jsx';
 
 // Role Dashboards
 import { SellerDashboardPage } from './pages/seller/SellerDashboardPage.jsx';
@@ -38,6 +39,7 @@ import { SellerOrdersPage } from './pages/seller/SellerOrdersPage.jsx';
 import { SellerEarningsPage } from './pages/seller/SellerEarningsPage.jsx';
 import { DeliveryDashboardPage } from './pages/delivery/DeliveryDashboardPage.jsx';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage.jsx';
+import { AdminLoginPage } from './pages/admin/AdminLoginPage.jsx';
 
 // Scroll to top helper
 const ScrollToTop = () => {
@@ -101,6 +103,8 @@ const AppLayout = () => {
           <Route path="/procurement-assistant" element={<ProcurementAssistantPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/application-status" element={<ApplicationStatusPage />} />
+          <Route path="/admin/login" element={<AdminLoginPage />} />
 
           {/* Protected Buyer Routes */}
           <Route
@@ -218,6 +222,38 @@ const AppLayout = () => {
           <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
           <Route
             path="/admin/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/applications"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/applications/farmers"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/applications/delivery"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/users"
             element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <AdminDashboardPage />

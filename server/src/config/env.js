@@ -17,5 +17,7 @@ export const config = {
   aiProvider: process.env.AI_PROVIDER || 'demo',
   aiApiKey: process.env.AI_API_KEY || '',
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
-  uploadDir: process.env.UPLOAD_DIR || 'uploads'
+  uploadDir: process.env.UPLOAD_DIR || 'uploads',
+  adminEmail: (process.env.ADMIN_EMAIL || 'admin@mandiplus.com').trim().toLowerCase(),
+  adminInitialPassword: process.env.ADMIN_INITIAL_PASSWORD || 'Password123!'
 };

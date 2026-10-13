@@ -19,7 +19,9 @@ export const WishlistProvider = ({ children }) => {
           setWishlistIds(new Set(prods.map(p => p._id)));
         }
       } catch (err) {
-        console.error('Failed to load wishlist:', err);
+        if (err.response?.status !== 401) {
+          console.error('Failed to load wishlist:', err);
+        }
       }
     } else {
       setWishlistItems([]);
