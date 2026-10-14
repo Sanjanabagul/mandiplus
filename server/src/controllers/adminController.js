@@ -2,6 +2,7 @@ import { User } from '../models/User.js';
 import { Product } from '../models/Product.js';
 import { Order } from '../models/Order.js';
 import { AuditLog } from '../models/AuditLog.js';
+import { getSafeDatabaseDiagnostics } from '../config/db.js';
 
 export const getAdminDashboard = async (req, res, next) => {
   try {
@@ -15,6 +16,7 @@ export const getAdminDashboard = async (req, res, next) => {
       approvedFarmers,
       approvedDeliveryPartners,
       rejectedApplications,
+      suspendedUsers,
       totalProducts,
       pendingApprovalProducts,
       orders
@@ -25,9 +27,10 @@ export const getAdminDashboard = async (req, res, next) => {
       User.countDocuments({ role: 'delivery' }),
       User.countDocuments({ role: { $in: ['seller', 'farmer'] }, approvalStatus: 'pending' }),
       User.countDocuments({ role: 'delivery', approvalStatus: 'pending' }),
-      User.countDocuments({ role: { $in: ['seller', 'farmer'] }, approvalStatus: 'approved' }),
-      User.countDocuments({ role: 'delivery', approvalStatus: 'approved' }),
+      User.countDocuments({ role: { $in: ['seller', 'farmer'] }, approvalStatus: 'approved', isActive: true, status: 'active' }),
+      User.countDocuments({ role: 'delivery', approvalStatus: 'approved', isActive: true, status: 'active' }),
       User.countDocuments({ approvalStatus: 'rejected' }),
+      User.countDocuments({ status: 'suspended' }),
       Product.countDocuments(),
       Product.countDocuments({ approvalStatus: 'pending' }),
       Order.find().lean()
@@ -68,6 +71,7 @@ export const getAdminDashboard = async (req, res, next) => {
         approvedFarmers,
         approvedDeliveryPartners,
         rejectedApplications,
+        suspendedUsers,
         totalPendingApplications: pendingFarmerApplications + pendingDeliveryApplications,
         totalProducts,
         pendingApprovalProducts,
@@ -560,12 +564,68 @@ export const getAdminAnalytics = async (req, res, next) => {
       analytics: {
         categoryDistribution,
         statusDistribution,
-        revenueTrend: revenueTrend.length > 0 ? revenueTrend : [
-          { date: 'Day 1', sales: 45000 },
-          { date: 'Day 2', sales: 62000 },
-          { date: 'Day 3', sales: 89000 },
-          { date: 'Today', sales: 114500 }
-        ]
+        revenueTrend
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getAdminDatabaseDiagnostics = async (req, res, next) => {
+  try {
+    const baseDiagnostics = await getSafeDatabaseDiagnostics();
+
+    const [
+      totalUsers,
+      totalProducts,
+      totalOrders,
+      buyerCount,
+      farmerCount,
+      deliveryCount,
+      adminCount,
+      pendingApplications,
+      approvedUsers,
+      rejectedUsers,
+      activeUsers,
+      suspendedUsers
+    ] = await Promise.all([
+      User.countDocuments(),
+      Product.countDocuments(),
+      Order.countDocuments(),
+      User.countDocuments({ role: 'buyer' }),
+      User.countDocuments({ role: { $in: ['seller', 'farmer'] } }),
+      User.countDocuments({ role: 'delivery' }),
+      User.countDocuments({ role: 'admin' }),
+      User.countDocuments({ approvalStatus: 'pending' }),
+      User.countDocuments({ approvalStatus: 'approved' }),
+      User.countDocuments({ approvalStatus: 'rejected' }),
+      User.countDocuments({ isActive: true, status: 'active' }),
+      User.countDocuments({ status: 'suspended' })
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      diagnostics: {
+        ...baseDiagnostics,
+        counts: {
+          totalUsers,
+          totalProducts,
+          totalOrders,
+          activeUsers,
+          suspendedUsers,
+          byRole: {
+            buyer: buyerCount,
+            farmer: farmerCount,
+            delivery: deliveryCount,
+            admin: adminCount
+          },
+          byApprovalStatus: {
+            pending: pendingApplications,
+            approved: approvedUsers,
+            rejected: rejectedUsers
+          }
+        }
       }
     });
   } catch (err) {

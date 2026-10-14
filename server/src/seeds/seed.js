@@ -9,6 +9,10 @@ import { DeliveryAssignment } from '../models/DeliveryAssignment.js';
 import { categoriesSeed, usersSeed, productsSeed } from './seedData.js';
 
 export const runSeed = async () => {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('Database demo seeding is strictly prohibited in production mode to protect genuine records.');
+  }
+
   try {
     console.log('[Seed] Starting Mandi+ database seeding...');
     if (mongoose.connection.readyState !== 1) {

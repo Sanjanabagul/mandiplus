@@ -36,11 +36,6 @@ export const AdminLoginPage = () => {
     }
   };
 
-  const fillAdminCredentials = () => {
-    setEmail('admin@mandiplus.com');
-    setPassword('Password123!');
-  };
-
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 bg-slate-50/50">
       <div className="bg-white rounded-2xl border border-gray-200 shadow-xl max-w-md w-full p-8 animate-fade-in">
@@ -129,18 +124,10 @@ export const AdminLoginPage = () => {
           </button>
         </form>
 
-        <div className="text-center text-xs text-gray-500 mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
+        <div className="text-center text-xs text-gray-500 mt-6 pt-4 border-t border-gray-100 flex items-center justify-center">
           <Link to="/login" className="text-gray-500 hover:text-mandi-blue">
             ← Marketplace Login
           </Link>
-
-          <button
-            type="button"
-            onClick={fillAdminCredentials}
-            className="text-[11px] text-mandi-blue hover:underline font-bold cursor-pointer"
-          >
-            Fill Demo Admin
-          </button>
         </div>
 
       </div>

@@ -69,5 +69,15 @@ export const adminService = {
   getAnalytics: async () => {
     const res = await api.get('/admin/analytics');
     return res.data;
+  },
+
+  getDbStatus: async () => {
+    const res = await api.get('/admin/db-status');
+    return res.data;
+  },
+
+  exportOrdersCsv: async () => {
+    const res = await api.get('/reports/export-orders', { responseType: 'blob' });
+    return res.data;
   }
 };

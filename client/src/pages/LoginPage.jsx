@@ -42,11 +42,6 @@ export const LoginPage = () => {
     }
   };
 
-  const fillDemoAccount = (demoEmail) => {
-    setEmail(demoEmail);
-    setPassword('Password123!');
-  };
-
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
       <div className="bg-white rounded-2xl border border-gray-200 shadow-xl max-w-md w-full p-8 animate-fade-in">
@@ -154,46 +149,6 @@ export const LoginPage = () => {
           </div>
         </div>
 
-        {/* Quick Demo Credentials Panel for Pair Programming / Review */}
-        <div className="mt-8 pt-6 border-t border-gray-100">
-          <h4 className="text-[11px] font-bold uppercase tracking-wider text-gray-400 text-center mb-3">
-            Quick One-Click Test Accounts
-          </h4>
-
-          <div className="grid grid-cols-2 gap-2 text-[11px]">
-            <button
-              onClick={() => fillDemoAccount('buyer@mandiplus.com')}
-              className="p-2 rounded-lg border border-gray-200 hover:border-mandi-blue hover:bg-blue-50/50 text-left transition-colors cursor-pointer"
-            >
-              <div className="font-bold text-mandi-navy">🛒 Retail Buyer</div>
-              <div className="text-gray-400 text-[10px]">buyer@mandiplus.com</div>
-            </button>
-
-            <button
-              onClick={() => fillDemoAccount('farmer@mandiplus.com')}
-              className="p-2 rounded-lg border border-gray-200 hover:border-mandi-green hover:bg-green-50/50 text-left transition-colors cursor-pointer"
-            >
-              <div className="font-bold text-mandi-green">🌾 Farmer Seller</div>
-              <div className="text-gray-400 text-[10px]">farmer@mandiplus.com</div>
-            </button>
-
-            <button
-              onClick={() => fillDemoAccount('delivery@mandiplus.com')}
-              className="p-2 rounded-lg border border-gray-200 hover:border-amber-500 hover:bg-amber-50/50 text-left transition-colors cursor-pointer"
-            >
-              <div className="font-bold text-amber-700">🚚 Delivery Fleet</div>
-              <div className="text-gray-400 text-[10px]">delivery@mandiplus.com</div>
-            </button>
-
-            <button
-              onClick={() => fillDemoAccount('admin@mandiplus.com')}
-              className="p-2 rounded-lg border border-gray-200 hover:border-red-500 hover:bg-red-50/50 text-left transition-colors cursor-pointer"
-            >
-              <div className="font-bold text-red-600">🛡️ Administrator</div>
-              <div className="text-gray-400 text-[10px]">admin@mandiplus.com</div>
-            </button>
-          </div>
-        </div>
 
       </div>
     </div>

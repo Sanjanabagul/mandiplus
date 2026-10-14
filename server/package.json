@@ -9,8 +9,10 @@
     "dev": "node --watch server.js",
     "seed": "node src/seeds/seed.js",
     "seed:admin": "node src/seeds/seedAdmin.js",
-    "test": "node --test tests/*.test.js",
-    "db:view": "node scripts/viewDb.js"
+    "test": "node --import=./tests/testSetup.js --test tests/*.test.js",
+    "db:view": "node scripts/viewDb.js",
+    "db:diagnose": "node scripts/dbDiagnostics.js",
+    "clean:demo": "node scripts/cleanDemoData.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

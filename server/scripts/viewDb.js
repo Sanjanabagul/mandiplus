@@ -17,15 +17,17 @@ const viewDatabase = async () => {
   console.log('🌾 MANDI+ DATABASE VIEWER');
   console.log('======================================================\n');
 
-  let targetUri = config.mongodbUri;
-  if (fs.existsSync(uriFilePath)) {
-    const active = fs.readFileSync(uriFilePath, 'utf-8').trim();
-    if (active) targetUri = active;
-  }
+  const targetUri = config.mongodbUri;
 
   try {
-    console.log(`Connecting to: ${targetUri}...`);
-    await mongoose.connect(targetUri, { serverSelectionTimeoutMS: 3000 });
+    const isSrv = targetUri.startsWith('mongodb+srv://');
+    let hostDisplay = 'configured MongoDB cluster';
+    try {
+      const parsed = new URL(targetUri.replace(/^mongodb(\+srv)?:\/\//, isSrv ? 'https://' : 'http://'));
+      hostDisplay = `${parsed.host}/${parsed.pathname.replace(/^\//, '')}`;
+    } catch {}
+    console.log(`Connecting to: ${hostDisplay}...`);
+    await mongoose.connect(targetUri, { serverSelectionTimeoutMS: 5000 });
     console.log('✅ Connected to MongoDB!\n');
 
     // 1. Collection Counts
@@ -79,10 +81,8 @@ const viewDatabase = async () => {
     console.log('======================================================\n');
 
   } catch (err) {
-    console.error('\n⚠️ Could not connect to external MongoDB service:', err.message);
-    console.log('\nIf your server is using the automatic embedded in-memory MongoDB:');
-    console.log('1. Check the server console logs for the active connection URI.');
-    console.log('2. Or open http://localhost:5173/admin in your browser to view all database records live in the Admin Console!');
+    console.error('\n⚠️ Could not connect to configured MongoDB service:', err.message);
+    console.log('Please ensure your IP address is whitelisted in MongoDB Atlas Network Access and MONGODB_URI is correct.');
   } finally {
     await mongoose.disconnect();
     process.exit(0);

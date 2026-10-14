@@ -11,7 +11,7 @@ export const config = {
   port: parseInt(process.env.PORT || '5000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
   mongodbUri: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/mandiplus',
-  useEmbeddedDbFallback: process.env.USE_EMBEDDED_DB_IF_LOCAL_FAILS !== 'false',
+  useEmbeddedDbFallback: process.env.NODE_ENV === 'test',
   jwtSecret: process.env.JWT_SECRET || 'dev_secret_mandiplus_key',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   aiProvider: process.env.AI_PROVIDER || 'demo',

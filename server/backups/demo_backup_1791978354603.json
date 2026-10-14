@@ -1,0 +1,886 @@
+{
+  "timestamp": "2026-10-14T11:45:54.602Z",
+  "database": "mandiplus",
+  "demoUsers": [
+    {
+      "_id": "6acb589b97a0c9d8b49a0395",
+      "name": "Suresh Kirana & Restaurant (Buyer)",
+      "email": "buyer@mandiplus.com",
+      "phone": "+91 98901 77889",
+      "role": "buyer",
+      "businessName": "Annapurna Bhojanalaya & Retail",
+      "locality": "Kothrud, Pune",
+      "avatar": "",
+      "status": "active",
+      "addresses": [
+        {
+          "fullName": "Suresh Sharma",
+          "phone": "+91 98901 77889",
+          "streetAddress": "Shop 4, Gandhi Chowk, Paud Road",
+          "locality": "Kothrud",
+          "city": "Pune",
+          "state": "Maharashtra",
+          "pincode": "411038",
+          "landmark": "",
+          "isDefault": true,
+          "deliveryInstructions": "Deliver before 11:00 AM at rear kitchen entrance.",
+          "_id": "6acb589b97a0c9d8b49a0396"
+        }
+      ],
+      "sellerProfile": {
+        "bankDetails": {
+          "accountHolder": "",
+          "bankName": "",
+          "accountNumber": "",
+          "ifscCode": ""
+        },
+        "verified": false,
+        "farmLocation": "",
+        "farmSizeAcres": 0,
+        "primaryCrops": [],
+        "totalRatings": 0,
+        "averageRating": 0
+      },
+      "deliveryProfile": {
+        "vehicleType": "Two-Wheeler / Mini Truck",
+        "vehicleNumber": "",
+        "drivingLicense": "",
+        "isAvailable": true,
+        "activeDeliveriesCount": 0
+      },
+      "createdAt": "2026-10-11T09:36:27.389Z",
+      "updatedAt": "2026-10-11T10:13:48.511Z",
+      "__v": 0
+    },
+    {
+      "_id": "6acb589b97a0c9d8b49a0399",
+      "name": "Amit Shinde (Delivery Partner)",
+      "email": "delivery@mandiplus.com",
+      "phone": "+91 98765 43210",
+      "role": "delivery",
+      "businessName": "Kisan Express Logistics",
+      "locality": "Pune & Pimpri-Chinchwad",
+      "avatar": "",
+      "status": "active",
+      "sellerProfile": {
+        "bankDetails": {
+          "accountHolder": "",
+          "bankName": "",
+          "accountNumber": "",
+          "ifscCode": ""
+        },
+        "verified": false,
+        "farmLocation": "",
+        "farmSizeAcres": 0,
+        "primaryCrops": [],
+        "totalRatings": 0,
+        "averageRating": 0
+      },
+      "deliveryProfile": {
+        "vehicleType": "Tata Ace Mini Truck",
+        "vehicleNumber": "MH-12-AQ-8899",
+        "drivingLicense": "MH1220180029341",
+        "isAvailable": true,
+        "activeDeliveriesCount": 1
+      },
+      "addresses": [],
+      "createdAt": "2026-10-11T09:36:27.588Z",
+      "updatedAt": "2026-10-11T10:13:48.543Z",
+      "__v": 0
+    },
+    {
+      "_id": "6acb589a97a0c9d8b49a038c",
+      "name": "Rajesh Patil (Farmer)",
+      "email": "farmer@mandiplus.com",
+      "phone": "+91 98220 11223",
+      "role": "seller",
+      "businessName": "Sahyadri Agro Farms",
+      "locality": "Nashik APMC",
+      "avatar": "",
+      "status": "active",
+      "addresses": [
+        {
+          "fullName": "Rajesh Patil",
+          "phone": "+91 98220 11223",
+          "streetAddress": "Farm Gate No. 4, Dindori Road",
+          "locality": "Nashik APMC",
+          "city": "Nashik",
+          "state": "Maharashtra",
+          "pincode": "422003",
+          "landmark": "",
+          "isDefault": true,
+          "deliveryInstructions": "",
+          "_id": "6acb589a97a0c9d8b49a038d"
+        }
+      ],
+      "sellerProfile": {
+        "verified": true,
+        "farmLocation": "Dindori, Nashik, Maharashtra",
+        "farmSizeAcres": 12,
+        "primaryCrops": [
+          "Onion",
+          "Tomato",
+          "Grapes",
+          "Pomegranate"
+        ],
+        "totalRatings": 142,
+        "averageRating": 4.8
+      },
+      "deliveryProfile": {
+        "vehicleType": "Two-Wheeler / Mini Truck",
+        "vehicleNumber": "",
+        "drivingLicense": "",
+        "isAvailable": true,
+        "activeDeliveriesCount": 0
+      },
+      "createdAt": "2026-10-11T09:36:26.961Z",
+      "updatedAt": "2026-10-11T10:13:48.431Z",
+      "__v": 0
+    },
+    {
+      "_id": "6acb589b97a0c9d8b49a0391",
+      "name": "Rameshwar Khot (Grower)",
+      "email": "ramesh@mandiplus.com",
+      "phone": "+91 98231 44556",
+      "role": "seller",
+      "businessName": "Krishna Valley Organic Produce",
+      "locality": "Pune Market Yard",
+      "avatar": "",
+      "status": "active",
+      "addresses": [
+        {
+          "fullName": "Rameshwar Khot",
+          "phone": "+91 98231 44556",
+          "streetAddress": "Plot 12, Market Yard",
+          "locality": "Gultekdi, Pune",
+          "city": "Pune",
+          "state": "Maharashtra",
+          "pincode": "411037",
+          "landmark": "",
+          "isDefault": true,
+          "deliveryInstructions": "",
+          "_id": "6acb589b97a0c9d8b49a0392"
+        }
+      ],
+      "sellerProfile": {
+        "verified": true,
+        "farmLocation": "Baramati, Pune, Maharashtra",
+        "farmSizeAcres": 25,
+        "primaryCrops": [
+          "Potato",
+          "Spinach",
+          "Wheat",
+          "Organic Vegetables"
+        ],
+        "totalRatings": 89,
+        "averageRating": 4.9
+      },
+      "deliveryProfile": {
+        "vehicleType": "Two-Wheeler / Mini Truck",
+        "vehicleNumber": "",
+        "drivingLicense": "",
+        "isAvailable": true,
+        "activeDeliveriesCount": 0
+      },
+      "createdAt": "2026-10-11T09:36:27.210Z",
+      "updatedAt": "2026-10-11T10:13:48.475Z",
+      "__v": 0
+    }
+  ],
+  "demoOrders": [
+    {
+      "_id": "6acb589c97a0c9d8b49a03ac",
+      "orderNumber": "MP-202610-10001",
+      "buyer": "6acb589b97a0c9d8b49a0395",
+      "buyerName": "Suresh Kirana & Restaurant (Buyer)",
+      "buyerEmail": "buyer@mandiplus.com",
+      "buyerPhone": "+91 98901 77889",
+      "items": [
+        {
+          "product": "6acb589beba057f328f5ab46",
+          "name": "Nashik Red Onions (Export Quality)",
+          "image": "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?auto=format&fit=crop&w=800&q=80",
+          "category": "Vegetables",
+          "unit": "kg",
+          "seller": "6acb589a97a0c9d8b49a038c",
+          "sellerName": "Sahyadri Agro Farms",
+          "unitPrice": 28,
+          "quantity": 50,
+          "subtotal": 1400
+        }
+      ],
+      "subtotal": 1400,
+      "deliveryCharge": 50,
+      "discountTotal": 0,
+      "taxTotal": 0,
+      "totalAmount": 1450,
+      "shippingAddress": {
+        "fullName": "Suresh Sharma",
+        "phone": "+91 98901 77889",
+        "streetAddress": "Shop 4, Gandhi Chowk, Paud Road",
+        "locality": "Kothrud",
+        "city": "Pune",
+        "state": "Maharashtra",
+        "pincode": "411038",
+        "instructions": ""
+      },
+      "paymentMethod": "cod",
+      "paymentStatus": "pending",
+      "status": "ready_for_pickup",
+      "statusHistory": [
+        {
+          "status": "pending",
+          "note": "Order placed by buyer",
+          "timestamp": "2026-10-11T05:36:28.214Z"
+        },
+        {
+          "status": "confirmed",
+          "note": "Confirmed by farmer Rajesh Patil",
+          "timestamp": "2026-10-11T06:36:28.214Z"
+        },
+        {
+          "status": "ready_for_pickup",
+          "note": "Packed in 50kg gunny bags, ready at farm gate",
+          "timestamp": "2026-10-11T08:36:28.214Z"
+        }
+      ],
+      "deliveryPartner": "6acb589b97a0c9d8b49a0399",
+      "cancellationReason": "",
+      "createdAt": "2026-10-11T09:36:28.220Z",
+      "updatedAt": "2026-10-11T09:36:28.220Z",
+      "__v": 0
+    }
+  ],
+  "demoProducts": [
+    {
+      "_id": "6acb589beba057f328f5ab46",
+      "name": "Nashik Red Onions (Export Quality)",
+      "seller": "6acb589a97a0c9d8b49a038c",
+      "__v": 0,
+      "approvalStatus": "approved",
+      "averageRating": 4.8,
+      "bulkPricingTiers": [
+        {
+          "minQuantity": 50,
+          "pricePerUnit": 25,
+          "discountPercent": 11
+        },
+        {
+          "minQuantity": 200,
+          "pricePerUnit": 22,
+          "discountPercent": 21
+        },
+        {
+          "minQuantity": 500,
+          "pricePerUnit": 19,
+          "discountPercent": 32
+        }
+      ],
+      "category": "Vegetables",
+      "coordinates": {
+        "lat": null,
+        "lng": null
+      },
+      "createdAt": "2026-10-11T09:36:27.922Z",
+      "cropType": "Onion",
+      "description": "Pungent, firm Nashik red onions with thick dry outer scales. Ideal for hotels, restaurants, and long-term storage.",
+      "harvestDate": "2026-10-11T09:36:27.934Z",
+      "images": [
+        "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1580201092675-a0a6a6cafbb1?auto=format&fit=crop&w=800&q=80"
+      ],
+      "isAvailable": true,
+      "isOrganic": false,
+      "minOrderQuantity": 10,
+      "organicCertNumber": "",
+      "originalPrice": 35,
+      "pickupLocality": "Nashik APMC",
+      "pincode": "",
+      "pricePerUnit": 28,
+      "productionMethod": "Open Field",
+      "qualityGrade": "Grade A",
+      "qualityGradeDetails": {
+        "assessedAt": "2026-10-11T10:13:47.065Z",
+        "assessedBy": "Mandi+ AgriVision Model",
+        "confidence": 0.96,
+        "notes": "Uniform 55-65mm bulb diameter, zero rot, skin dryness verified.",
+        "defectRatePercent": 1.2
+      },
+      "sellerName": "Sahyadri Agro Farms",
+      "stockQuantity": 4500,
+      "totalReviews": 24,
+      "unit": "kg",
+      "updatedAt": "2026-10-11T10:13:48.590Z"
+    },
+    {
+      "_id": "6acb589ceba057f328f5ab48",
+      "name": "Jyoti Table Potatoes (Cold Store Fresh)",
+      "seller": "6acb589a97a0c9d8b49a038c",
+      "__v": 0,
+      "approvalStatus": "approved",
+      "averageRating": 4.6,
+      "bulkPricingTiers": [
+        {
+          "minQuantity": 50,
+          "pricePerUnit": 21,
+          "discountPercent": 12
+        },
+        {
+          "minQuantity": 250,
+          "pricePerUnit": 18,
+          "discountPercent": 25
+        }
+      ],
+      "category": "Vegetables",
+      "coordinates": {
+        "lat": null,
+        "lng": null
+      },
+      "createdAt": "2026-10-11T09:36:27.972Z",
+      "cropType": "Potato",
+      "description": "Smooth-skinned, medium-to-large Jyoti variety potatoes. Perfect for boiling, curries, and french fries.",
+      "harvestDate": "2026-10-11T09:36:27.974Z",
+      "images": [
+        "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=800&q=80"
+      ],
+      "isAvailable": true,
+      "isOrganic": false,
+      "minOrderQuantity": 20,
+      "organicCertNumber": "",
+      "originalPrice": 28,
+      "pickupLocality": "Nashik APMC",
+      "pincode": "",
+      "pricePerUnit": 24,
+      "productionMethod": "Open Field",
+      "qualityGrade": "Grade A",
+      "qualityGradeDetails": {
+        "assessedBy": "Manual",
+        "defectRatePercent": 0,
+        "notes": ""
+      },
+      "sellerName": "Sahyadri Agro Farms",
+      "stockQuantity": 6000,
+      "totalReviews": 19,
+      "unit": "kg",
+      "updatedAt": "2026-10-11T10:13:48.656Z"
+    },
+    {
+      "_id": "6acb589ceba057f328f5ab4a",
+      "name": "Sharbati Golden Wheat (MP Origin)",
+      "seller": "6acb589a97a0c9d8b49a038c",
+      "__v": 0,
+      "approvalStatus": "approved",
+      "averageRating": 4.8,
+      "bulkPricingTiers": [
+        {
+          "minQuantity": 100,
+          "pricePerUnit": 38,
+          "discountPercent": 10
+        },
+        {
+          "minQuantity": 500,
+          "pricePerUnit": 35,
+          "discountPercent": 17
+        }
+      ],
+      "category": "Grains",
+      "coordinates": {
+        "lat": null,
+        "lng": null
+      },
+      "createdAt": "2026-10-11T09:36:28.018Z",
+      "cropType": "Wheat",
+      "description": "Heavy, lustrous golden Sharbati wheat grains yielding extraordinarily soft and nutritious rotis.",
+      "harvestDate": "2026-10-11T09:36:28.018Z",
+      "images": [
+        "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=800&q=80"
+      ],
+      "isAvailable": true,
+      "isOrganic": false,
+      "minOrderQuantity": 25,
+      "organicCertNumber": "",
+      "originalPrice": 50,
+      "pickupLocality": "Nashik APMC",
+      "pincode": "",
+      "pricePerUnit": 42,
+      "productionMethod": "Traditional",
+      "qualityGrade": "Grade A",
+      "qualityGradeDetails": {
+        "assessedBy": "Manual",
+        "defectRatePercent": 0,
+        "notes": ""
+      },
+      "sellerName": "Sahyadri Agro Farms",
+      "stockQuantity": 8500,
+      "totalReviews": 42,
+      "unit": "kg",
+      "updatedAt": "2026-10-11T10:13:48.693Z"
+    },
+    {
+      "_id": "6acb589ceba057f328f5ab4c",
+      "name": "Unpolished Desi Toor Dal (Pigeon Pea)",
+      "seller": "6acb589a97a0c9d8b49a038c",
+      "__v": 0,
+      "approvalStatus": "approved",
+      "averageRating": 4.8,
+      "bulkPricingTiers": [
+        {
+          "minQuantity": 30,
+          "pricePerUnit": 130,
+          "discountPercent": 7
+        },
+        {
+          "minQuantity": 100,
+          "pricePerUnit": 122,
+          "discountPercent": 13
+        }
+      ],
+      "category": "Pulses",
+      "coordinates": {
+        "lat": null,
+        "lng": null
+      },
+      "createdAt": "2026-10-11T09:36:28.058Z",
+      "cropType": "Toor Dal",
+      "description": "Naturally sun-dried and water-processed toor dal with zero artificial yellow oil polish. Maximum protein content.",
+      "harvestDate": "2026-10-11T09:36:28.058Z",
+      "images": [
+        "https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?auto=format&fit=crop&w=800&q=80"
+      ],
+      "isAvailable": true,
+      "isOrganic": true,
+      "minOrderQuantity": 5,
+      "organicCertNumber": "",
+      "originalPrice": 165,
+      "pickupLocality": "Nashik APMC",
+      "pincode": "",
+      "pricePerUnit": 140,
+      "productionMethod": "Organic Farmed",
+      "qualityGrade": "Grade A",
+      "qualityGradeDetails": {
+        "assessedBy": "Manual",
+        "defectRatePercent": 0,
+        "notes": ""
+      },
+      "sellerName": "Sahyadri Agro Farms",
+      "stockQuantity": 2200,
+      "totalReviews": 29,
+      "unit": "kg",
+      "updatedAt": "2026-10-11T10:13:48.732Z"
+    },
+    {
+      "_id": "6acb589ceba057f328f5ab4e",
+      "name": "Ratnagiri Alphonso (Hapus) Mangoes",
+      "seller": "6acb589a97a0c9d8b49a038c",
+      "__v": 0,
+      "approvalStatus": "approved",
+      "averageRating": 5,
+      "bulkPricingTiers": [
+        {
+          "minQuantity": 10,
+          "pricePerUnit": 580,
+          "discountPercent": 11
+        },
+        {
+          "minQuantity": 50,
+          "pricePerUnit": 520,
+          "discountPercent": 20
+        }
+      ],
+      "category": "Fruits",
+      "coordinates": {
+        "lat": null,
+        "lng": null
+      },
+      "createdAt": "2026-10-11T09:36:28.093Z",
+      "cropType": "Mango",
+      "description": "GI-tagged authentic Ratnagiri Alphonso mangoes. Naturally ripened in grass crates with heavenly aroma.",
+      "harvestDate": "2026-10-11T09:36:28.094Z",
+      "images": [
+        "https://images.unsplash.com/photo-1553279768-865429fa0078?auto=format&fit=crop&w=800&q=80"
+      ],
+      "isAvailable": true,
+      "isOrganic": false,
+      "minOrderQuantity": 2,
+      "organicCertNumber": "",
+      "originalPrice": 850,
+      "pickupLocality": "Nashik APMC",
+      "pincode": "",
+      "pricePerUnit": 650,
+      "productionMethod": "Traditional",
+      "qualityGrade": "Grade A",
+      "qualityGradeDetails": {
+        "assessedBy": "Manual",
+        "defectRatePercent": 0,
+        "notes": ""
+      },
+      "sellerName": "Sahyadri Agro Farms",
+      "stockQuantity": 350,
+      "totalReviews": 54,
+      "unit": "dozen",
+      "updatedAt": "2026-10-11T10:13:48.769Z"
+    },
+    {
+      "_id": "6acb589ceba057f328f5ab50",
+      "name": "Bhusawal G9 Cavendish Bananas (Export Grade)",
+      "seller": "6acb589a97a0c9d8b49a038c",
+      "__v": 0,
+      "approvalStatus": "approved",
+      "averageRating": 4.8,
+      "bulkPricingTiers": [
+        {
+          "minQuantity": 10,
+          "pricePerUnit": 340,
+          "discountPercent": 11
+        },
+        {
+          "minQuantity": 50,
+          "pricePerUnit": 310,
+          "discountPercent": 18
+        }
+      ],
+      "category": "Fruits",
+      "coordinates": {
+        "lat": null,
+        "lng": null
+      },
+      "createdAt": "2026-10-11T09:36:28.124Z",
+      "cropType": "Banana",
+      "description": "Large, clean, unblemished Bhusawal bananas harvested at uniform mature green stage.",
+      "harvestDate": "2026-10-11T09:36:28.124Z",
+      "images": [
+        "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=800&q=80"
+      ],
+      "isAvailable": true,
+      "isOrganic": false,
+      "minOrderQuantity": 2,
+      "organicCertNumber": "",
+      "originalPrice": 450,
+      "pickupLocality": "Nashik APMC",
+      "pincode": "",
+      "pricePerUnit": 380,
+      "productionMethod": "Greenhouse",
+      "qualityGrade": "Grade A",
+      "qualityGradeDetails": {
+        "assessedBy": "Manual",
+        "defectRatePercent": 0,
+        "notes": ""
+      },
+      "sellerName": "Sahyadri Agro Farms",
+      "stockQuantity": 420,
+      "totalReviews": 31,
+      "unit": "crate",
+      "updatedAt": "2026-10-11T10:13:48.819Z"
+    },
+    {
+      "_id": "6acb589ceba057f328f5ab47",
+      "seller": "6acb589b97a0c9d8b49a0391",
+      "name": "Hybrid Salad Tomatoes (Farm Fresh)",
+      "__v": 0,
+      "approvalStatus": "approved",
+      "averageRating": 4.7,
+      "bulkPricingTiers": [
+        {
+          "minQuantity": 40,
+          "pricePerUnit": 20,
+          "discountPercent": 9
+        },
+        {
+          "minQuantity": 100,
+          "pricePerUnit": 18,
+          "discountPercent": 18
+        },
+        {
+          "minQuantity": 300,
+          "pricePerUnit": 15,
+          "discountPercent": 32
+        }
+      ],
+      "category": "Vegetables",
+      "coordinates": {
+        "lat": null,
+        "lng": null
+      },
+      "createdAt": "2026-10-11T09:36:27.955Z",
+      "cropType": "Tomato",
+      "description": "Bright red, juicy, firm hybrid tomatoes harvested at 80% ripeness for long transport shelf-life.",
+      "harvestDate": "2026-10-11T09:36:27.956Z",
+      "images": [
+        "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1546470427-e26264be0b11?auto=format&fit=crop&w=800&q=80"
+      ],
+      "isAvailable": true,
+      "isOrganic": false,
+      "minOrderQuantity": 15,
+      "organicCertNumber": "",
+      "originalPrice": 30,
+      "pickupLocality": "Pune Market Yard",
+      "pincode": "",
+      "pricePerUnit": 22,
+      "productionMethod": "Open Field",
+      "qualityGrade": "Grade A",
+      "qualityGradeDetails": {
+        "assessedAt": "2026-10-11T10:13:47.065Z",
+        "assessedBy": "Mandi+ AgriVision Model",
+        "confidence": 0.94,
+        "notes": "Firm pulp, deep red coloration, no blossom end rot.",
+        "defectRatePercent": 2
+      },
+      "sellerName": "Krishna Valley Organic Produce",
+      "stockQuantity": 2800,
+      "totalReviews": 38,
+      "unit": "kg",
+      "updatedAt": "2026-10-11T10:13:48.621Z"
+    },
+    {
+      "_id": "6acb589ceba057f328f5ab49",
+      "seller": "6acb589b97a0c9d8b49a0391",
+      "name": "Certified Organic Baby Spinach (Palak)",
+      "__v": 0,
+      "approvalStatus": "approved",
+      "averageRating": 4.9,
+      "bulkPricingTiers": [
+        {
+          "minQuantity": 25,
+          "pricePerUnit": 30,
+          "discountPercent": 14
+        }
+      ],
+      "category": "Organic Produce",
+      "coordinates": {
+        "lat": null,
+        "lng": null
+      },
+      "createdAt": "2026-10-11T09:36:27.993Z",
+      "cropType": "Spinach",
+      "description": "Tender, organic, pesticide-free spinach leaves cultivated with vermicompost. High in iron and nutrients.",
+      "harvestDate": "2026-10-11T09:36:27.994Z",
+      "images": [
+        "https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=800&q=80"
+      ],
+      "isAvailable": true,
+      "isOrganic": true,
+      "minOrderQuantity": 5,
+      "organicCertNumber": "NPOP/NAB/0014/2025",
+      "originalPrice": 45,
+      "pickupLocality": "Pune Market Yard",
+      "pincode": "",
+      "pricePerUnit": 35,
+      "productionMethod": "Organic Farmed",
+      "qualityGrade": "Grade A",
+      "qualityGradeDetails": {
+        "assessedBy": "Manual",
+        "defectRatePercent": 0,
+        "notes": ""
+      },
+      "sellerName": "Krishna Valley Organic Produce",
+      "stockQuantity": 450,
+      "totalReviews": 15,
+      "unit": "kg",
+      "updatedAt": "2026-10-11T10:13:48.674Z"
+    },
+    {
+      "_id": "6acb589ceba057f328f5ab4b",
+      "seller": "6acb589b97a0c9d8b49a0391",
+      "name": "Royal 1121 Aged Basmati Rice",
+      "__v": 0,
+      "approvalStatus": "approved",
+      "averageRating": 4.9,
+      "bulkPricingTiers": [
+        {
+          "minQuantity": 50,
+          "pricePerUnit": 88,
+          "discountPercent": 7
+        },
+        {
+          "minQuantity": 200,
+          "pricePerUnit": 82,
+          "discountPercent": 14
+        }
+      ],
+      "category": "Grains",
+      "coordinates": {
+        "lat": null,
+        "lng": null
+      },
+      "createdAt": "2026-10-11T09:36:28.042Z",
+      "cropType": "Rice",
+      "description": "Extra-long grain aromatic basmati rice aged for 2 years. Cooks to twice its original grain length.",
+      "harvestDate": "2026-10-11T09:36:28.042Z",
+      "images": [
+        "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=800&q=80"
+      ],
+      "isAvailable": true,
+      "isOrganic": false,
+      "minOrderQuantity": 10,
+      "organicCertNumber": "",
+      "originalPrice": 120,
+      "pickupLocality": "Pune Market Yard",
+      "pincode": "",
+      "pricePerUnit": 95,
+      "productionMethod": "Traditional",
+      "qualityGrade": "Grade A",
+      "qualityGradeDetails": {
+        "assessedBy": "Manual",
+        "defectRatePercent": 0,
+        "notes": ""
+      },
+      "sellerName": "Krishna Valley Organic Produce",
+      "stockQuantity": 3200,
+      "totalReviews": 61,
+      "unit": "kg",
+      "updatedAt": "2026-10-11T10:13:48.710Z"
+    },
+    {
+      "_id": "6acb589ceba057f328f5ab4d",
+      "seller": "6acb589b97a0c9d8b49a0391",
+      "name": "Salem Pure Turmeric Fingers (Curcumin 4.5%)",
+      "__v": 0,
+      "approvalStatus": "approved",
+      "averageRating": 4.9,
+      "bulkPricingTiers": [
+        {
+          "minQuantity": 25,
+          "pricePerUnit": 165,
+          "discountPercent": 8
+        },
+        {
+          "minQuantity": 100,
+          "pricePerUnit": 150,
+          "discountPercent": 17
+        }
+      ],
+      "category": "Spices",
+      "coordinates": {
+        "lat": null,
+        "lng": null
+      },
+      "createdAt": "2026-10-11T09:36:28.078Z",
+      "cropType": "Turmeric",
+      "description": "Whole aromatic dried Salem turmeric rhizomes rich in natural essential oils and active curcumin.",
+      "harvestDate": "2026-10-11T09:36:28.078Z",
+      "images": [
+        "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=80"
+      ],
+      "isAvailable": true,
+      "isOrganic": false,
+      "minOrderQuantity": 5,
+      "organicCertNumber": "",
+      "originalPrice": 220,
+      "pickupLocality": "Pune Market Yard",
+      "pincode": "",
+      "pricePerUnit": 180,
+      "productionMethod": "Traditional",
+      "qualityGrade": "Grade A",
+      "qualityGradeDetails": {
+        "assessedBy": "Manual",
+        "defectRatePercent": 0,
+        "notes": ""
+      },
+      "sellerName": "Krishna Valley Organic Produce",
+      "stockQuantity": 1400,
+      "totalReviews": 18,
+      "unit": "kg",
+      "updatedAt": "2026-10-11T10:13:48.749Z"
+    },
+    {
+      "_id": "6acb589ceba057f328f5ab4f",
+      "seller": "6acb589b97a0c9d8b49a0391",
+      "name": "Fresh Ginger (Ale) - Hot Spicy Variety",
+      "__v": 0,
+      "approvalStatus": "approved",
+      "averageRating": 4.7,
+      "bulkPricingTiers": [
+        {
+          "minQuantity": 30,
+          "pricePerUnit": 58,
+          "discountPercent": 11
+        }
+      ],
+      "category": "Spices",
+      "coordinates": {
+        "lat": null,
+        "lng": null
+      },
+      "createdAt": "2026-10-11T09:36:28.110Z",
+      "cropType": "Ginger",
+      "description": "Freshly dug aromatic ginger with thick fleshy rhizomes, free from dirt clods and rot.",
+      "harvestDate": "2026-10-11T09:36:28.110Z",
+      "images": [
+        "https://images.unsplash.com/photo-1615485500704-8e990f9900f7?auto=format&fit=crop&w=800&q=80"
+      ],
+      "isAvailable": true,
+      "isOrganic": false,
+      "minOrderQuantity": 5,
+      "organicCertNumber": "",
+      "originalPrice": 80,
+      "pickupLocality": "Pune Market Yard",
+      "pincode": "",
+      "pricePerUnit": 65,
+      "productionMethod": "Open Field",
+      "qualityGrade": "Grade A",
+      "qualityGradeDetails": {
+        "assessedBy": "Manual",
+        "defectRatePercent": 0,
+        "notes": ""
+      },
+      "sellerName": "Krishna Valley Organic Produce",
+      "stockQuantity": 1800,
+      "totalReviews": 12,
+      "unit": "kg",
+      "updatedAt": "2026-10-11T10:13:48.787Z"
+    },
+    {
+      "_id": "6acb589ceba057f328f5ab51",
+      "name": "Pure Desi A2 Gir Cow Ghee (Bilona Method)",
+      "seller": "6acb589b97a0c9d8b49a0391",
+      "__v": 0,
+      "approvalStatus": "approved",
+      "averageRating": 5,
+      "bulkPricingTiers": [
+        {
+          "minQuantity": 5,
+          "pricePerUnit": 1350,
+          "discountPercent": 7
+        },
+        {
+          "minQuantity": 20,
+          "pricePerUnit": 1250,
+          "discountPercent": 14
+        }
+      ],
+      "category": "Dairy",
+      "coordinates": {
+        "lat": null,
+        "lng": null
+      },
+      "createdAt": "2026-10-11T09:36:28.145Z",
+      "cropType": "Ghee",
+      "description": "Traditional Vedic bilona cultured ghee prepared from grass-fed Gir cows. Rich aroma and granular texture.",
+      "harvestDate": "2026-10-11T09:36:28.145Z",
+      "images": [
+        "https://images.unsplash.com/photo-1589927986089-35812388d1f4?auto=format&fit=crop&w=800&q=80"
+      ],
+      "isAvailable": true,
+      "isOrganic": true,
+      "minOrderQuantity": 1,
+      "organicCertNumber": "",
+      "originalPrice": 1700,
+      "pickupLocality": "Pune Market Yard",
+      "pincode": "",
+      "pricePerUnit": 1450,
+      "productionMethod": "Traditional",
+      "qualityGrade": "Grade A",
+      "qualityGradeDetails": {
+        "assessedBy": "Manual",
+        "defectRatePercent": 0,
+        "notes": ""
+      },
+      "sellerName": "Krishna Valley Organic Produce",
+      "stockQuantity": 180,
+      "totalReviews": 44,
+      "unit": "kg",
+      "updatedAt": "2026-10-11T10:13:48.838Z"
+    }
+  ]
+}

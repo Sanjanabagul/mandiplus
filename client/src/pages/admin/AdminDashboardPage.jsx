@@ -46,6 +46,8 @@ export const AdminDashboardPage = () => {
 
   const [stats, setStats] = useState(null);
   const [analytics, setAnalytics] = useState(null);
+  const [dbInfo, setDbInfo] = useState(null);
+  const [loadError, setLoadError] = useState('');
   const [activeTab, setActiveTab] = useState(initialTab); // 'overview' | 'applications' | 'users' | 'products' | 'orders'
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -75,19 +77,24 @@ export const AdminDashboardPage = () => {
   const [orders, setOrders] = useState([]);
   const [orderSearch, setOrderSearch] = useState('');
 
-  // Fetch macro stats and analytics
+  // Fetch macro stats, analytics, and verified DB connection diagnostics
   const fetchDashboardData = async () => {
     setLoading(true);
+    setLoadError('');
     try {
-      const [dashRes, analRes] = await Promise.all([
+      const [dashRes, analRes, dbRes] = await Promise.all([
         adminService.getDashboard(),
-        adminService.getAnalytics()
+        adminService.getAnalytics(),
+        adminService.getDbStatus().catch(() => ({ success: false }))
       ]);
 
       if (dashRes.success) setStats(dashRes.stats);
       if (analRes.success) setAnalytics(analRes.analytics);
+      if (dbRes?.success) setDbInfo(dbRes.diagnostics);
     } catch (err) {
       console.error('Error fetching dashboard stats:', err);
+      const errMsg = err.response?.data?.message || err.message || 'Failed to fetch governance data.';
+      setLoadError(errMsg);
     } finally {
       setLoading(false);
     }
@@ -251,15 +258,52 @@ export const AdminDashboardPage = () => {
     }
   };
 
-  const handleExportCsv = () => {
-    window.open('/api/reports/export-orders', '_blank');
+  const handleExportCsv = async () => {
+    try {
+      const blobData = await adminService.exportOrdersCsv();
+      const url = window.URL.createObjectURL(new Blob([blobData], { type: 'text/csv;charset=utf-8;' }));
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('download', `mandiplus-orders-report-${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      setActionErrorMessage('Failed to export orders CSV: ' + (err.response?.data?.message || err.message));
+    }
   };
 
   if (loading) {
     return (
       <div className="min-h-[500px] flex flex-col items-center justify-center gap-3">
         <RefreshCw className="w-8 h-8 animate-spin text-mandi-blue" />
-        <span className="text-xs font-bold text-gray-500">Loading Governance Portal...</span>
+        <span className="text-xs font-bold text-gray-500">Loading Governance Portal from Database...</span>
+      </div>
+    );
+  }
+
+  if (loadError && !stats) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-16 text-center animate-fade-in">
+        <div className="bg-red-50 border border-red-200 rounded-3xl p-8 shadow-sm">
+          <div className="w-14 h-14 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+            <AlertCircle className="w-7 h-7" />
+          </div>
+          <h2 className="text-lg font-black text-gray-900 mb-1">Database Connection Unavailable</h2>
+          <p className="text-xs text-red-700 max-w-md mx-auto mb-6 leading-relaxed">
+            {loadError}
+          </p>
+          <div className="flex items-center justify-center gap-3">
+            <button
+              onClick={handleManualRefresh}
+              className="bg-mandi-blue hover:bg-blue-600 text-white font-bold text-xs py-2.5 px-5 rounded-xl flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>Retry Querying Database</span>
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -275,9 +319,19 @@ export const AdminDashboardPage = () => {
               <ShieldCheck className="w-6 h-6" />
             </span>
             <h1 className="text-2xl font-black text-mandi-navy">Mandi+ Admin Portal</h1>
+            {dbInfo && (
+              <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ml-2 ${
+                dbInfo.connected
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                  : 'bg-red-50 text-red-800 border-red-200'
+              }`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${dbInfo.connected ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`}></span>
+                <span>DB: {dbInfo.databaseName} ({dbInfo.connectionState})</span>
+              </span>
+            )}
           </div>
           <p className="text-xs text-mandi-muted mt-1">
-            Role approvals, farmer verification, fleet governance, product moderation & platform analytics
+            Real database records, farmer verification, fleet governance, product moderation & platform analytics
           </p>
         </div>
 

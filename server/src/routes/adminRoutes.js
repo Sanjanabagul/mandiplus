@@ -13,7 +13,8 @@ import {
   getAdminProducts,
   updateProductApproval,
   getAdminOrders,
-  getAdminAnalytics
+  getAdminAnalytics,
+  getAdminDatabaseDiagnostics
 } from '../controllers/adminController.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { authorize } from '../middleware/roleMiddleware.js';
@@ -23,6 +24,10 @@ const router = express.Router();
 // Strict backend protection: all routes require authenticated admin
 router.use(protect);
 router.use(authorize('admin'));
+
+// Database Diagnostics & Safe Status
+router.get('/db-status', getAdminDatabaseDiagnostics);
+router.get('/system/db-status', getAdminDatabaseDiagnostics);
 
 // Dashboard & Statistics
 router.get('/dashboard', getAdminDashboard);

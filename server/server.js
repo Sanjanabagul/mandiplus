@@ -147,8 +147,6 @@ app.use((req, res) => {
 // Centralized error handler
 app.use(errorHandler);
 
-import { runSeed } from './src/seeds/seed.js';
-
 // Server startup function
 const startServer = async () => {
   try {
@@ -160,14 +158,6 @@ const startServer = async () => {
       await seedAdmin();
     } catch (adminErr) {
       logger.warn('[AdminProvisioning] Auto-provision check notice:', adminErr.message);
-    }
-
-    // Check if database is empty and auto-seed initial demo catalog
-    const { Product } = await import('./src/models/Product.js');
-    const count = await Product.countDocuments();
-    if (count === 0) {
-      logger.info('Fresh database detected. Auto-seeding initial categories, demo users, and produce catalog...');
-      await runSeed();
     }
 
     const server = app.listen(config.port, () => {
