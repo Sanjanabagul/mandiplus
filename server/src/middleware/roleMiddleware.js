@@ -7,21 +7,24 @@ export const authorize = (...roles) => {
       });
     }
 
-    // Support interchangeable farmer/seller role permissions
+    // Support interchangeable farmer/seller role permissions and admin hub privileges
     const normalizedAllowedRoles = new Set(roles);
     if (normalizedAllowedRoles.has('seller') || normalizedAllowedRoles.has('farmer')) {
       normalizedAllowedRoles.add('seller');
       normalizedAllowedRoles.add('farmer');
     }
-
-    if (!normalizedAllowedRoles.has(req.user.role)) {
-      return res.status(403).json({
-        success: false,
-        message: `Forbidden: Role '${req.user.role}' is not authorized to access this resource.`
-      });
+    if (normalizedAllowedRoles.has('hub_operator')) {
+      normalizedAllowedRoles.add('admin');
     }
 
-    next();
+    if (req.user.role === 'admin' || normalizedAllowedRoles.has(req.user.role)) {
+      return next();
+    }
+
+    return res.status(403).json({
+      success: false,
+      message: `Forbidden: Role '${req.user.role}' is not authorized to access this resource.`
+    });
   };
 };
 

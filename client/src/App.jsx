@@ -38,6 +38,7 @@ import { SellerProductsPage } from './pages/seller/SellerProductsPage.jsx';
 import { SellerOrdersPage } from './pages/seller/SellerOrdersPage.jsx';
 import { SellerEarningsPage } from './pages/seller/SellerEarningsPage.jsx';
 import { DeliveryDashboardPage } from './pages/delivery/DeliveryDashboardPage.jsx';
+import { HubOperationsPage } from './pages/hub/HubOperationsPage.jsx';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage.jsx';
 import { AdminLoginPage } from './pages/admin/AdminLoginPage.jsx';
 
@@ -214,6 +215,17 @@ const AppLayout = () => {
             element={
               <ProtectedRoute allowedRoles={['delivery', 'admin']}>
                 <DeliveryDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Mandi+ Central Fulfilment Hub Operations */}
+          <Route path="/hub" element={<Navigate to="/hub/operations" replace />} />
+          <Route
+            path="/hub/operations"
+            element={
+              <ProtectedRoute allowedRoles={['hub_operator', 'admin']}>
+                <HubOperationsPage />
               </ProtectedRoute>
             }
           />

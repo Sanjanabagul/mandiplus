@@ -1,6 +1,9 @@
 import { Product } from '../models/Product.js';
 import { Order } from '../models/Order.js';
 import { Notification } from '../models/Notification.js';
+import { FarmerSupplyRequest } from '../models/FarmerSupplyRequest.js';
+import { InventoryBatch } from '../models/InventoryBatch.js';
+import { FarmerSettlement } from '../models/FarmerSettlement.js';
 
 export const getSellerDashboard = async (req, res, next) => {
   try {
@@ -8,59 +11,52 @@ export const getSellerDashboard = async (req, res, next) => {
 
     const [
       totalProducts,
-      activeProducts,
-      lowStockProducts,
-      allOrders
+      activeBatches,
+      allSupplyRequests,
+      settlements,
+      recentRequests
     ] = await Promise.all([
-      Product.countDocuments({ seller: sellerId }),
-      Product.countDocuments({ seller: sellerId, isAvailable: true, stockQuantity: { $gt: 0 } }),
-      Product.countDocuments({ seller: sellerId, stockQuantity: { $gt: 0, $lte: 20 } }),
-      Order.find({ 'items.seller': sellerId }).lean()
+      Product.countDocuments({ $or: [{ seller: sellerId }, { sourceFarmers: sellerId }] }),
+      InventoryBatch.find({ sourceFarmer: sellerId, isSellable: true }).lean(),
+      FarmerSupplyRequest.find({ farmer: sellerId }).lean(),
+      FarmerSettlement.find({ farmer: sellerId }).lean(),
+      FarmerSupplyRequest.find({ farmer: sellerId }).sort({ createdAt: -1 }).limit(5).lean()
     ]);
 
-    let totalGrossSales = 0;
-    let completedSales = 0;
-    let incomingOrders = 0;
-    let pendingFulfillment = 0;
-    let completedOrders = 0;
+    let totalAcceptedQuantity = 0;
+    let pendingReviews = 0;
+    let approvedForDelivery = 0;
+    let acceptedSupplies = 0;
 
-    for (const order of allOrders) {
-      const sellerItems = order.items.filter(i => i.seller.toString() === sellerId.toString());
-      const orderSellerTotal = sellerItems.reduce((acc, i) => acc + i.subtotal, 0);
-
-      totalGrossSales += orderSellerTotal;
-
-      if (['pending'].includes(order.status)) {
-        incomingOrders++;
-      }
-      if (['confirmed', 'preparing', 'ready_for_pickup'].includes(order.status)) {
-        pendingFulfillment++;
-      }
-      if (order.status === 'delivered') {
-        completedOrders++;
-        completedSales += orderSellerTotal;
+    for (const reqItem of allSupplyRequests) {
+      if (['submitted', 'under_review'].includes(reqItem.status)) pendingReviews++;
+      if (reqItem.status === 'approved_for_delivery') approvedForDelivery++;
+      if (['accepted', 'partially_accepted'].includes(reqItem.status)) {
+        acceptedSupplies++;
+        totalAcceptedQuantity += (reqItem.receiving?.acceptedQuantity || 0);
       }
     }
 
-    const recentOrders = await Order.find({ 'items.seller': sellerId })
-      .sort({ createdAt: -1 })
-      .limit(5)
-      .lean();
+    const totalGrossEarnings = settlements.reduce((sum, s) => sum + (s.netPayable || 0), 0);
+    const completedPayouts = settlements.reduce((sum, s) => sum + (s.paidAmount || 0), 0);
+    const pendingPayout = Math.max(0, totalGrossEarnings - completedPayouts);
 
     return res.status(200).json({
       success: true,
       metrics: {
         totalProducts,
-        activeProducts,
-        lowStockProducts,
-        incomingOrders,
-        pendingFulfillment,
-        completedOrders,
-        totalGrossSales,
-        completedSales,
-        pendingSettlement: totalGrossSales - completedSales
+        activeBatchesInHub: activeBatches.length,
+        totalSuppliesSubmitted: allSupplyRequests.length,
+        pendingReviews,
+        approvedForDelivery,
+        acceptedSupplies,
+        totalAcceptedQuantity: Math.round(totalAcceptedQuantity * 10) / 10,
+        totalGrossSales: totalGrossEarnings,
+        completedSales: completedPayouts,
+        pendingSettlement: pendingPayout
       },
-      recentOrders
+      recentRequests,
+      activeBatches
     });
   } catch (err) {
     next(err);

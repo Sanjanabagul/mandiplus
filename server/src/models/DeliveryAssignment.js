@@ -10,14 +10,27 @@ const deliveryAssignmentSchema = new mongoose.Schema({
   deliveryPartner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
+    required: false,
+    default: null,
     index: true
   },
   pickupAddress: {
-    supplierName: { type: String, required: true },
-    locality: { type: String, required: true },
-    phone: { type: String, default: '' },
-    pincode: { type: String, default: '' }
+    hubId: { type: mongoose.Schema.Types.ObjectId, ref: 'Hub', default: null },
+    hubName: { type: String, default: 'Mandi+ Hub Central' },
+    supplierName: { type: String, default: 'Mandi+ Hub Fulfilment Facility' },
+    address: { type: String, default: 'Mandi+ Hub Dispatch Bay 1' },
+    locality: { type: String, default: 'Central Agricultural Hub' },
+    city: { type: String, default: 'Pune' },
+    phone: { type: String, default: '+91-1800-MANDI-HUB' },
+    pincode: { type: String, default: '411001' }
+  },
+  packageCount: {
+    type: Number,
+    default: 1
+  },
+  pickupOtpVerified: {
+    type: Boolean,
+    default: false
   },
   deliveryAddress: {
     recipientName: { type: String, required: true },

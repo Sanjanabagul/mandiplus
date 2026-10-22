@@ -11,18 +11,50 @@ import {
   XCircle,
   ArrowLeft,
   RefreshCw,
-  Phone
+  Phone,
+  Warehouse,
+  ShieldCheck,
+  Check
 } from 'lucide-react';
 import { orderService } from '../services/orderService.js';
 
 const STATUS_STEPS = [
-  { key: 'pending', label: 'Order Placed', desc: 'Received and awaiting farmer confirmation' },
-  { key: 'confirmed', label: 'Farmer Confirmed', desc: 'Harvest scheduled at regional farm' },
-  { key: 'preparing', label: 'Harvesting & Packing', desc: 'Graded and packed in standard crates/bags' },
-  { key: 'ready_for_pickup', label: 'Ready at Farm Gate', desc: 'Ready for Mandi logistics partner pickup' },
-  { key: 'out_for_delivery', label: 'Out for Delivery', desc: 'En route to your store/commercial kitchen' },
-  { key: 'delivered', label: 'Delivered', desc: 'Delivered & verified by store manager' }
+  { key: 'confirmed', label: 'Order Confirmed', desc: 'Order verified and inventory reserved at Mandi+ Hub' },
+  { key: 'processing_hub', label: 'Processing at Mandi+ Hub', desc: 'Routed to Mandi+ Hub fulfilment and pick queue' },
+  { key: 'picking', label: 'Items Being Picked', desc: 'Hub staff picking fresh produce across traceable batches' },
+  { key: 'packing', label: 'Packing Completed', desc: 'Consolidated, quality-inspected, and packed into single shipment' },
+  { key: 'ready_for_pickup', label: 'Ready for Pickup', desc: 'Staged at Mandi+ Hub Dispatch Bay awaiting partner collection' },
+  { key: 'assigned', label: 'Delivery Partner Assigned', desc: 'Logistics partner assigned to collect complete order from hub' },
+  { key: 'picked_up', label: 'Picked Up from Mandi+ Hub', desc: 'Handover complete via secure pickup verification at hub bay' },
+  { key: 'out_for_delivery', label: 'Out for Delivery', desc: 'Courier en route to your business/kitchen destination' },
+  { key: 'delivered', label: 'Delivered', desc: 'Single consolidated shipment delivered & verified' }
 ];
+
+const getActiveStepIndex = (status) => {
+  switch (status) {
+    case 'pending':
+    case 'confirmed':
+      return 0;
+    case 'processing_hub':
+      return 1;
+    case 'picking':
+      return 2;
+    case 'packing':
+      return 3;
+    case 'ready_for_pickup':
+      return 4;
+    case 'assigned':
+      return 5;
+    case 'picked_up':
+      return 6;
+    case 'out_for_delivery':
+      return 7;
+    case 'delivered':
+      return 8;
+    default:
+      return 0;
+  }
+};
 
 export const OrderTrackingPage = () => {
   const params = useParams();
@@ -93,12 +125,8 @@ export const OrderTrackingPage = () => {
   }
 
   const isCancelled = order.status === 'cancelled';
-  const canCancel = ['pending', 'confirmed'].includes(order.status);
-
-  // Determine active step index
-  const activeStepIdx = isCancelled
-    ? -1
-    : STATUS_STEPS.findIndex(s => s.key === order.status || (order.status === 'picked_up' && s.key === 'out_for_delivery'));
+  const canCancel = ['pending', 'confirmed', 'processing_hub'].includes(order.status);
+  const activeStepIdx = isCancelled ? -1 : getActiveStepIndex(order.status);
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
@@ -108,8 +136,14 @@ export const OrderTrackingPage = () => {
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
-            <h1 className="text-xl font-bold text-mandi-navy">Order Tracking: #{order.orderNumber}</h1>
-            <p className="text-xs text-mandi-muted">Live agricultural logistics milestone tracking</p>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-bold text-mandi-navy">Order Tracking: #{order.orderNumber}</h1>
+              <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <Warehouse className="w-3 h-3 text-emerald-600" />
+                Fulfilled by Mandi+ Hub
+              </span>
+            </div>
+            <p className="text-xs text-mandi-muted">Centralized Quick-Commerce Fulfilment & Live Logistics Timeline</p>
           </div>
         </div>
 
@@ -129,20 +163,53 @@ export const OrderTrackingPage = () => {
           <XCircle className="w-6 h-6 shrink-0 text-red-600" />
           <div>
             <span className="font-bold block text-sm">Order Cancelled</span>
-            <span>Reason: {order.cancellationReason || 'Cancelled by buyer'}. Inventory has been safely restored to the farmer catalog.</span>
+            <span>Reason: {order.cancellationReason || 'Cancelled by buyer'}. Reserved hub inventory has been safely released.</span>
           </div>
         </div>
       )}
 
-      {/* ---------------- PERSISTED STATUS TIMELINE ---------------- */}
+      {/* Prominent Mandi+ Hub Fulfilment Guarantee Banner */}
+      {!isCancelled && (
+        <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-blue-50 border border-emerald-200 rounded-2xl p-4 sm:p-5 mb-6 shadow-sm flex items-start gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+            <Warehouse className="w-5 h-5" />
+          </div>
+          <div className="flex-1 text-xs">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-extrabold text-emerald-950 text-sm">Centralized Fulfilment Guarantee</span>
+              <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
+                Mandi+ Hub Model
+              </span>
+            </div>
+            <p className="text-emerald-900 font-medium leading-relaxed text-xs sm:text-sm">
+              &ldquo;Your order is being prepared at Mandi+ Hub. Your delivery partner will collect your complete order from the hub.&rdquo;
+            </p>
+            <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-emerald-800 pt-2 border-t border-emerald-200/60">
+              <span>Fulfilment Hub: <strong>{order.hub?.name || 'Mandi+ Central Fulfilment Hub (Pune East - Wagholi)'}</strong></span>
+              <span>Pickup Dispatch: <strong>Bay 1, Regional Fulfilment Terminal</strong></span>
+              <span>Package: <strong>Single Consolidated Shipment</strong></span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ---------------- PERSISTED 9-STEP STATUS TIMELINE ---------------- */}
       {!isCancelled && (
         <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm mb-6">
-          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-6">Fulfillment Lifecycle</h3>
+          <div className="flex items-center justify-between pb-3 border-b border-gray-100 mb-6">
+            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+              Mandi+ Hub Fulfilment Lifecycle (9 Milestones)
+            </h3>
+            <span className="text-xs font-bold text-mandi-blue capitalize">
+              Current Status: {order.status.replace(/_/g, ' ')}
+            </span>
+          </div>
 
           <div className="relative border-l-2 border-gray-200 ml-4 sm:ml-6 space-y-6">
             {STATUS_STEPS.map((st, idx) => {
-              const isPastOrCurrent = activeStepIdx >= idx;
+              const isPast = activeStepIdx > idx;
               const isCurrent = activeStepIdx === idx;
+              const isFuture = activeStepIdx < idx;
 
               // Find matching history entry
               const historyEntry = order.statusHistory?.find(h => h.status === st.key);
@@ -153,17 +220,23 @@ export const OrderTrackingPage = () => {
                   <div className={`absolute -left-2.5 top-0 w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px] shadow-xs ${
                     isCurrent
                       ? 'bg-mandi-blue ring-4 ring-blue-100 animate-pulse'
-                      : isPastOrCurrent
+                      : isPast
                       ? 'bg-mandi-green'
                       : 'bg-gray-300'
                   }`}>
-                    {isPastOrCurrent ? <CheckCircle2 className="w-3.5 h-3.5" /> : idx + 1}
+                    {isPast ? <CheckCircle2 className="w-3.5 h-3.5" /> : idx + 1}
                   </div>
 
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                     <div>
-                      <h4 className={`text-xs font-bold ${isCurrent ? 'text-mandi-blue text-sm' : isPastOrCurrent ? 'text-gray-800' : 'text-gray-400'}`}>
-                        {st.label}
+                      <h4 className={`text-xs font-bold ${
+                        isCurrent
+                          ? 'text-mandi-blue text-sm'
+                          : isPast
+                          ? 'text-gray-800'
+                          : 'text-gray-400'
+                      }`}>
+                        {idx + 1}. {st.label}
                       </h4>
                       <p className="text-[11px] text-gray-500 mt-0.5">
                         {historyEntry?.note || st.desc}
@@ -171,8 +244,8 @@ export const OrderTrackingPage = () => {
                     </div>
 
                     {historyEntry?.timestamp && (
-                      <span className="text-[10px] text-gray-400 font-medium">
-                        {new Date(historyEntry.timestamp).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}, {' '}
+                      <span className="text-[10px] text-gray-400 font-medium shrink-0">
+                        {new Date(historyEntry.timestamp).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })},{' '}
                         {new Date(historyEntry.timestamp).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                       </span>
                     )}
@@ -184,8 +257,31 @@ export const OrderTrackingPage = () => {
         </div>
       )}
 
-      {/* Delivery Carrier & Address Grid */}
+      {/* Fulfilment Hub Origin & Destination Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6 text-xs">
+        {/* Hub Collection Origin */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm space-y-2">
+          <div className="flex items-center gap-2 text-emerald-800 font-bold text-xs uppercase tracking-wider pb-2 border-b border-gray-100">
+            <Warehouse className="w-4 h-4 text-emerald-600" />
+            <span>Hub Dispatch Bay (Single Pickup Origin)</span>
+          </div>
+          <div className="font-bold text-gray-800 text-sm">
+            {order.hub?.name || 'Mandi+ Central Fulfilment Hub'}
+          </div>
+          <p className="text-gray-600 leading-relaxed">
+            {order.hub?.address?.street || 'Gate 4, APMC Regional Logistics Terminal, Nagar Road'}, {' '}
+            {order.hub?.address?.locality || 'Wagholi'}, {order.hub?.address?.city || 'Pune'} - {order.hub?.address?.pincode || '412207'}
+          </p>
+          <div className="text-gray-500 flex items-center gap-1.5">
+            <span>Fulfilment Contact:</span>
+            <span className="font-semibold text-gray-700">{order.hub?.phone || '+91 20 8923 1100'}</span>
+          </div>
+          <div className="text-[11px] bg-emerald-50 text-emerald-800 p-2 rounded-lg border border-emerald-100 font-medium">
+            Delivery partner collects the complete consolidated carton from this hub bay. No individual farm gate visits.
+          </div>
+        </div>
+
+        {/* Customer Delivery Destination */}
         <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm space-y-2">
           <div className="flex items-center gap-2 text-mandi-blue font-bold text-xs uppercase tracking-wider pb-2 border-b border-gray-100">
             <MapPin className="w-4 h-4" />
@@ -202,51 +298,77 @@ export const OrderTrackingPage = () => {
             </div>
           )}
         </div>
-
-        <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm space-y-2">
-          <div className="flex items-center gap-2 text-emerald-700 font-bold text-xs uppercase tracking-wider pb-2 border-b border-gray-100">
-            <Truck className="w-4 h-4" />
-            <span>Logistics Partner</span>
-          </div>
-          {order.deliveryPartner ? (
-            <div>
-              <div className="font-bold text-gray-800 text-sm">{order.deliveryPartner.name}</div>
-              <div className="text-gray-600">{order.deliveryPartner.deliveryProfile?.vehicleType || 'Mandi Express Mini Truck'}</div>
-              {order.deliveryPartner.deliveryProfile?.vehicleNumber && (
-                <div className="text-[11px] text-gray-500 font-mono mt-0.5">
-                  Plate: {order.deliveryPartner.deliveryProfile.vehicleNumber}
-                </div>
-              )}
-              {order.deliveryPartner.phone && (
-                <div className="flex items-center gap-1 text-mandi-blue mt-2 font-semibold">
-                  <Phone className="w-3.5 h-3.5" />
-                  <span>{order.deliveryPartner.phone}</span>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="text-gray-400 py-3">
-              Mandi+ Express carrier will be assigned once farmer completes packing at farm gate.
-            </div>
-          )}
-        </div>
       </div>
 
-      {/* Items Summary Table */}
+      {/* Logistics Partner Info */}
+      <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm mb-6 text-xs">
+        <div className="flex items-center gap-2 text-mandi-blue font-bold text-xs uppercase tracking-wider pb-2 border-b border-gray-100 mb-3">
+          <Truck className="w-4 h-4 text-mandi-blue" />
+          <span>Assigned Mandi+ Logistics Partner</span>
+        </div>
+        {order.deliveryPartner ? (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div className="font-bold text-gray-800 text-sm">{order.deliveryPartner.name}</div>
+              <div className="text-gray-600 mt-0.5">
+                {order.deliveryPartner.deliveryProfile?.vehicleType || 'Mandi+ Quick-Commerce Mini Truck'}
+                {order.deliveryPartner.deliveryProfile?.vehicleNumber && (
+                  <span className="font-mono ml-2 text-gray-500 font-bold">
+                    [{order.deliveryPartner.deliveryProfile.vehicleNumber}]
+                  </span>
+                )}
+              </div>
+            </div>
+            {order.deliveryPartner.phone && (
+              <a
+                href={`tel:${order.deliveryPartner.phone}`}
+                className="inline-flex items-center gap-1.5 bg-blue-50 hover:bg-blue-100 text-mandi-blue font-bold px-3 py-1.5 rounded-lg transition-colors w-fit"
+              >
+                <Phone className="w-3.5 h-3.5" />
+                <span>Call Courier ({order.deliveryPartner.phone})</span>
+              </a>
+            )}
+          </div>
+        ) : (
+          <div className="text-gray-500 py-2">
+            Order is being picked and packed at Mandi+ Hub. An authorized delivery courier will be assigned once the package reaches the Hub Ready-for-Pickup dispatch queue.
+          </div>
+        )}
+      </div>
+
+      {/* Items Summary Table with Traceable Batches */}
       <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
-        <h3 className="text-xs font-bold text-mandi-navy uppercase tracking-wider mb-4 pb-2 border-b border-gray-100">
-          Items in this Order
-        </h3>
+        <div className="flex items-center justify-between pb-3 border-b border-gray-100 mb-4">
+          <h3 className="text-xs font-bold text-mandi-navy uppercase tracking-wider">
+            Consolidated Order Items ({order.items.length})
+          </h3>
+          <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+            Single Package Fulfilment
+          </span>
+        </div>
 
         <div className="divide-y divide-gray-100 text-xs">
           {order.items.map((i, idx) => (
-            <div key={idx} className="py-2.5 flex items-center justify-between">
+            <div key={idx} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <span className="font-bold text-gray-800">{i.name}</span>
-                <span className="text-gray-400 ml-2">({i.quantity} {i.unit} @ ₹{i.unitPrice}/{i.unit})</span>
-                <div className="text-[10px] text-mandi-blue">Farmer: {i.sellerName}</div>
+                <div className="font-bold text-gray-800 text-sm">{i.name}</div>
+                <div className="text-gray-500 mt-0.5">
+                  {i.quantity} {i.unit} @ ₹{i.unitPrice}/{i.unit}
+                </div>
+                <div className="flex flex-wrap items-center gap-2 text-[11px] mt-1">
+                  <span className="text-mandi-blue font-semibold">
+                    Source Farmer: {i.sellerName || 'Verified Regional Farmer'}
+                  </span>
+                  {i.allocatedBatches && i.allocatedBatches.length > 0 && (
+                    <span className="text-gray-500 bg-gray-50 border border-gray-200 px-2 py-0.5 rounded font-mono text-[10px]">
+                      Batches: {i.allocatedBatches.map(b => b.batchNumber || b.batch).filter(Boolean).join(', ') || 'Auto-allocated'}
+                    </span>
+                  )}
+                </div>
               </div>
-              <span className="font-bold text-mandi-navy">₹{i.subtotal.toLocaleString('en-IN')}</span>
+              <div className="text-right">
+                <span className="font-bold text-mandi-navy text-sm">₹{i.subtotal.toLocaleString('en-IN')}</span>
+              </div>
             </div>
           ))}
         </div>
@@ -263,7 +385,7 @@ export const OrderTrackingPage = () => {
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
             <h3 className="text-base font-bold text-mandi-navy mb-2">Cancel Order #{order.orderNumber}?</h3>
             <p className="text-xs text-mandi-muted mb-4">
-              Are you sure you want to cancel this order? Stock will be immediately restored to the regional farmer.
+              Are you sure you want to cancel this order? Reserved stock will be immediately released back to Mandi+ Hub inventory.
             </p>
 
             <label className="block text-xs font-semibold text-gray-700 mb-1">Reason for Cancellation</label>
@@ -272,7 +394,7 @@ export const OrderTrackingPage = () => {
               onChange={(e) => setCancelReason(e.target.value)}
               className="w-full border border-gray-300 rounded-lg p-2 text-xs mb-4 focus:ring-1 focus:ring-mandi-blue focus:outline-none"
             >
-              <option value="Change of requirements">Change of restaurant/store produce requirements</option>
+              <option value="Change of requirements">Change of produce requirements</option>
               <option value="Procured elsewhere">Procured from local market earlier</option>
               <option value="Ordered by mistake">Placed order by mistake</option>
               <option value="Other">Other</option>

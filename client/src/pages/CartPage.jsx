@@ -8,7 +8,8 @@ import {
   ArrowRight,
   ShieldCheck,
   Truck,
-  Sparkles
+  Sparkles,
+  Warehouse
 } from 'lucide-react';
 import { useCart } from '../context/CartContext.jsx';
 
@@ -64,6 +65,19 @@ export const CartPage = () => {
         </button>
       </div>
 
+      {/* Centralized Mandi+ Hub Fulfilment Notice */}
+      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-emerald-900 mb-6 shadow-xs">
+        <div className="flex items-center gap-2.5">
+          <Warehouse className="w-4 h-4 text-emerald-600 shrink-0" />
+          <span>
+            <strong>Centralized Quick Fulfilment:</strong> All produce is picked, quality-checked, and consolidated at <strong>Mandi+ Hub</strong> for a single delivery to your doorstep.
+          </span>
+        </div>
+        <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded w-fit">
+          Fulfilled by Mandi+ Hub
+        </span>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
         {/* ---------------- LEFT: CART ITEMS LIST ---------------- */}
@@ -87,16 +101,21 @@ export const CartPage = () => {
                   />
 
                   <div className="space-y-1">
-                    <span className="text-[10px] uppercase font-bold text-mandi-blue bg-blue-50 px-2 py-0.5 rounded">
-                      {product.category || 'Produce'}
-                    </span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[10px] uppercase font-bold text-mandi-blue bg-blue-50 px-2 py-0.5 rounded">
+                        {product.category || 'Produce'}
+                      </span>
+                      <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.2 rounded">
+                        Fulfilled by Mandi+ Hub
+                      </span>
+                    </div>
                     <h3 className="font-bold text-sm text-mandi-navy">
                       <Link to={`/products/${prodId}`} className="hover:text-mandi-blue">
                         {product.name}
                       </Link>
                     </h3>
                     <div className="text-[11px] text-gray-500">
-                      Farmer: <strong>{product.sellerName || 'Verified Farmer'}</strong> • {product.pickupLocality || 'APMC Mandi'}
+                      Source Farmer: <strong>{product.sellerName || 'Verified Regional Farmer'}</strong>
                     </div>
                     <div className="text-xs font-bold text-mandi-navy">
                       ₹{price} / {unit}

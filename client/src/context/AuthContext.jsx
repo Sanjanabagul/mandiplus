@@ -95,6 +95,7 @@ export const AuthProvider = ({ children }) => {
       isFarmer: user?.role === 'farmer' || user?.role === 'seller',
       isAdmin: user?.role === 'admin',
       isDelivery: user?.role === 'delivery',
+      isHubOperator: user?.role === 'hub_operator',
       isApproved: user?.approvalStatus === 'approved' || user?.approvalStatus === 'not_required'
     }}>
       {children}

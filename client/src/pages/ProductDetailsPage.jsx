@@ -14,7 +14,8 @@ import {
   Minus,
   Truck,
   ArrowLeft,
-  Sparkles
+  Sparkles,
+  Warehouse
 } from 'lucide-react';
 import { productService } from '../services/productService.js';
 import { reviewService } from '../services/reviewService.js';
@@ -247,6 +248,12 @@ export const ProductDetailsPage = () => {
                 product.qualityGrade === 'Grade A' ? 'bg-mandi-green' : 'bg-amber-500'
               }`}>
                 {product.qualityGrade} Verified
+              </span>
+
+              {/* Fulfilled by Mandi+ Hub Badge */}
+              <span className="text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-md flex items-center gap-1 shadow-xs">
+                <Warehouse className="w-3.5 h-3.5 text-emerald-600" />
+                Fulfilled by Mandi+ Hub
               </span>
             </div>
 

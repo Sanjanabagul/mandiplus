@@ -9,7 +9,8 @@ import {
   Plus,
   ArrowRight,
   AlertCircle,
-  Truck
+  Truck,
+  Warehouse
 } from 'lucide-react';
 import { useCart } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -360,6 +361,19 @@ export const CheckoutPage = () => {
                 </div>
               </div>
 
+              {/* Mandi+ Hub Centralized Fulfilment Guarantee */}
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-4 text-xs text-emerald-900 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Warehouse className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>
+                    <strong>Consolidated Hub Order:</strong> All {itemCount} items will be picked and packed at <strong>Mandi+ Hub</strong> into a single consolidated delivery package.
+                  </span>
+                </div>
+                <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded shrink-0">
+                  Fulfilled by Mandi+ Hub
+                </span>
+              </div>
+
               {/* Items List */}
               <div className="space-y-3 divide-y divide-gray-100 mb-6">
                 {items.map((i, idx) => (
@@ -367,7 +381,7 @@ export const CheckoutPage = () => {
                     <div>
                       <div className="font-bold text-gray-800">{i.product?.name || 'Produce'}</div>
                       <div className="text-[11px] text-gray-500">
-                        Qty: {i.quantity} {i.product?.unit || 'kg'} • Farmer: {i.product?.sellerName || 'Direct'}
+                        Qty: {i.quantity} {i.product?.unit || 'kg'} • Source Farmer: <strong>{i.product?.sellerName || 'Verified Regional Farmer'}</strong> • Fulfilled by Mandi+ Hub
                       </div>
                     </div>
                     <div className="font-bold text-mandi-navy">

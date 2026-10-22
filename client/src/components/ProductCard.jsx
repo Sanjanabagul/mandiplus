@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, ShoppingCart, Check, Plus, Minus, ShieldCheck, MapPin } from 'lucide-react';
+import { Heart, ShoppingCart, Check, Plus, Minus, ShieldCheck, MapPin, Warehouse } from 'lucide-react';
 import { useCart } from '../context/CartContext.jsx';
 import { useWishlist } from '../context/WishlistContext.jsx';
 
@@ -106,8 +106,14 @@ export const ProductCard = ({ product }) => {
 
       {/* Card Content */}
       <div className="p-3.5 flex flex-col flex-1">
-        <div className="text-[11px] text-gray-400 font-medium mb-0.5 uppercase tracking-wide">
-          {product.category}
+        <div className="flex items-center justify-between gap-1 mb-0.5">
+          <span className="text-[11px] text-gray-400 font-medium uppercase tracking-wide">
+            {product.category}
+          </span>
+          <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 rounded px-1.5 py-0.2">
+            <Warehouse className="w-2.5 h-2.5 text-emerald-600" />
+            <span>Mandi+ Hub</span>
+          </span>
         </div>
 
         <Link

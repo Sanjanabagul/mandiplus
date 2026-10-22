@@ -1,5 +1,20 @@
 import mongoose from 'mongoose';
 
+const allocatedBatchSchema = new mongoose.Schema({
+  batch: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'InventoryBatch'
+  },
+  batchNumber: { type: String, default: '' },
+  farmer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  farmerName: { type: String, default: 'Mandi+ Partner Farmer' },
+  quantity: { type: Number, required: true },
+  purchaseCost: { type: Number, default: 0 }
+}, { _id: false });
+
 const orderItemSchema = new mongoose.Schema({
   product: {
     type: mongoose.Schema.Types.ObjectId,
@@ -13,12 +28,23 @@ const orderItemSchema = new mongoose.Schema({
   seller: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false,
+    default: null
   },
-  sellerName: { type: String, required: true },
+  sellerName: { type: String, default: 'Mandi+ Hub' },
   unitPrice: { type: Number, required: true },
   quantity: { type: Number, required: true, min: 1 },
-  subtotal: { type: Number, required: true }
+  subtotal: { type: Number, required: true },
+  allocatedBatches: [allocatedBatchSchema],
+  pickStatus: {
+    type: String,
+    enum: ['pending', 'picked', 'shortage'],
+    default: 'pending'
+  },
+  pickedQuantity: {
+    type: Number,
+    default: 0
+  }
 }, { _id: false });
 
 const statusHistorySchema = new mongoose.Schema({
@@ -27,12 +53,16 @@ const statusHistorySchema = new mongoose.Schema({
     enum: [
       'pending',
       'confirmed',
-      'preparing',
+      'processing_hub',
+      'picking',
+      'packing',
       'ready_for_pickup',
+      'assigned',
       'picked_up',
       'out_for_delivery',
       'delivered',
-      'cancelled'
+      'cancelled',
+      'preparing' // Legacy fallback
     ],
     required: true
   },
@@ -47,6 +77,20 @@ const orderSchema = new mongoose.Schema({
     required: true,
     unique: true,
     index: true
+  },
+  hub: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Hub',
+    default: null,
+    index: true
+  },
+  hubName: {
+    type: String,
+    default: 'Mandi+ Hub Central'
+  },
+  fulfilledBy: {
+    type: String,
+    default: 'Mandi+ Hub'
   },
   buyer: {
     type: mongoose.Schema.Types.ObjectId,
@@ -88,17 +132,48 @@ const orderSchema = new mongoose.Schema({
     enum: [
       'pending',
       'confirmed',
-      'preparing',
+      'processing_hub',
+      'picking',
+      'packing',
       'ready_for_pickup',
+      'assigned',
       'picked_up',
       'out_for_delivery',
       'delivered',
-      'cancelled'
+      'cancelled',
+      'preparing' // Legacy fallback
     ],
     default: 'pending',
     index: true
   },
   statusHistory: [statusHistorySchema],
+  picking: {
+    startedAt: { type: Date, default: null },
+    completedAt: { type: Date, default: null },
+    pickedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    notes: { type: String, default: '' }
+  },
+  packing: {
+    startedAt: { type: Date, default: null },
+    completedAt: { type: Date, default: null },
+    packedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    packageCount: { type: Number, default: 1 }
+  },
+  pickupOtp: {
+    type: String,
+    default: function() {
+      return Math.floor(1000 + Math.random() * 9000).toString();
+    }
+  },
+  handoverBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
+  dispatchedAt: {
+    type: Date,
+    default: null
+  },
   deliveryPartner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

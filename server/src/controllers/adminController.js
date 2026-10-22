@@ -2,6 +2,9 @@ import { User } from '../models/User.js';
 import { Product } from '../models/Product.js';
 import { Order } from '../models/Order.js';
 import { AuditLog } from '../models/AuditLog.js';
+import { FarmerSupplyRequest } from '../models/FarmerSupplyRequest.js';
+import { InventoryBatch } from '../models/InventoryBatch.js';
+import { Hub } from '../models/Hub.js';
 import { getSafeDatabaseDiagnostics } from '../config/db.js';
 
 export const getAdminDashboard = async (req, res, next) => {
@@ -19,6 +22,8 @@ export const getAdminDashboard = async (req, res, next) => {
       suspendedUsers,
       totalProducts,
       pendingApprovalProducts,
+      pendingSupplyRequests,
+      activeBatchesCount,
       orders
     ] = await Promise.all([
       User.countDocuments(),
@@ -33,6 +38,8 @@ export const getAdminDashboard = async (req, res, next) => {
       User.countDocuments({ status: 'suspended' }),
       Product.countDocuments(),
       Product.countDocuments({ approvalStatus: 'pending' }),
+      FarmerSupplyRequest.countDocuments({ status: { $in: ['submitted', 'under_review'] } }),
+      InventoryBatch.countDocuments({ isSellable: true }),
       Order.find().lean()
     ]);
 
@@ -75,6 +82,8 @@ export const getAdminDashboard = async (req, res, next) => {
         totalPendingApplications: pendingFarmerApplications + pendingDeliveryApplications,
         totalProducts,
         pendingApprovalProducts,
+        pendingSupplyRequests,
+        activeBatchesCount,
         totalOrders: orders.length,
         completedOrdersCount,
         pendingOrdersCount,

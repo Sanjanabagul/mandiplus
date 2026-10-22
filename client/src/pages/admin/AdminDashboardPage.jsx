@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import {
   Users,
   Package,
@@ -26,7 +26,8 @@ import {
   Phone,
   Mail,
   MapPin,
-  ExternalLink
+  ExternalLink,
+  Warehouse
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -553,6 +554,15 @@ export const AdminDashboardPage = () => {
           <DollarSign className="w-3.5 h-3.5" />
           <span>Orders Audit</span>
         </button>
+
+        <Link
+          to="/hub/operations"
+          className="py-2 px-4 rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-white shadow-xs sm:ml-auto"
+          title="Switch to Mandi+ Hub Centralized Fulfilment Console"
+        >
+          <Warehouse className="w-3.5 h-3.5 text-yellow-300" />
+          <span>Mandi+ Hub Console →</span>
+        </Link>
       </div>
 
       {/* ---------------- TAB 1: OVERVIEW & ANALYTICS ---------------- */}

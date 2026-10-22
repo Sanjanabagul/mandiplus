@@ -25,6 +25,7 @@ import aiRoutes from './src/routes/aiRoutes.js';
 import notificationRoutes from './src/routes/notificationRoutes.js';
 import reviewRoutes from './src/routes/reviewRoutes.js';
 import reportRoutes from './src/routes/reportRoutes.js';
+import hubRoutes from './src/routes/hubRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -131,6 +132,7 @@ const mountRoutes = (prefix = '') => {
   app.use(`${prefix}/notifications`, notificationRoutes);
   app.use(`${prefix}/reviews`, reviewRoutes);
   app.use(`${prefix}/reports`, reportRoutes);
+  app.use(`${prefix}/hub`, hubRoutes);
 };
 
 mountRoutes('/api');
@@ -158,6 +160,19 @@ const startServer = async () => {
       await seedAdmin();
     } catch (adminErr) {
       logger.warn('[AdminProvisioning] Auto-provision check notice:', adminErr.message);
+    }
+
+    // Auto-seed demo categories and products if database is empty
+    try {
+      const { Category } = await import('./src/models/Category.js');
+      const catCount = await Category.countDocuments();
+      if (catCount === 0) {
+        logger.info('[AutoSeed] Fresh database detected. Seeding categories, products, and demo accounts...');
+        const { runSeed } = await import('./src/seeds/seed.js');
+        await runSeed();
+      }
+    } catch (seedErr) {
+      logger.warn('[AutoSeed] Auto-seed check notice:', seedErr.message);
     }
 
     const server = app.listen(config.port, () => {

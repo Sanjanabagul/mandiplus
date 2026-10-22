@@ -48,23 +48,28 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: {
-      values: ['buyer', 'seller', 'farmer', 'delivery', 'admin'],
+      values: ['buyer', 'seller', 'farmer', 'delivery', 'admin', 'hub_operator'],
       message: '{VALUE} is not a valid user role'
     },
     default: 'buyer'
+  },
+  assignedHub: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Hub',
+    default: null
   },
   approvalStatus: {
     type: String,
     enum: ['not_required', 'pending', 'approved', 'rejected'],
     default: function () {
-      if (this.role === 'buyer' || this.role === 'admin') return 'not_required';
+      if (this.role === 'buyer' || this.role === 'admin' || this.role === 'hub_operator') return 'not_required';
       return 'pending';
     }
   },
   isActive: {
     type: Boolean,
     default: function () {
-      if (this.role === 'buyer' || this.role === 'admin') return true;
+      if (this.role === 'buyer' || this.role === 'admin' || this.role === 'hub_operator') return true;
       return false;
     }
   },

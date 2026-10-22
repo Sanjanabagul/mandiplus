@@ -205,6 +205,38 @@ export const usersSeed = [
     status: 'active',
     approvalStatus: 'not_required',
     isActive: true
+  },
+  {
+    name: 'Kavita Joshi (Mandi+ Hub Lead)',
+    email: 'hub@mandiplus.com',
+    password: 'Password123!',
+    phone: '+91 98888 77777',
+    role: 'hub_operator',
+    businessName: 'Mandi+ Central Fulfilment Hub',
+    locality: 'Pune Market Yard',
+    status: 'active',
+    approvalStatus: 'not_required',
+    isActive: true
+  },
+  {
+    name: 'Sunita Deshmukh (Farmer C - Potatoes)',
+    email: 'sunita@mandiplus.com',
+    password: 'Password123!',
+    phone: '+91 98111 22334',
+    role: 'farmer',
+    businessName: 'Deshmukh Organic Agro Farms',
+    locality: 'Manchar, Pune',
+    status: 'active',
+    approvalStatus: 'approved',
+    isActive: true,
+    sellerProfile: {
+      verified: true,
+      farmLocation: 'Manchar, Pune, Maharashtra',
+      farmSizeAcres: 18,
+      primaryCrops: ['Potato', 'Carrot', 'Beetroot'],
+      averageRating: 4.9,
+      totalRatings: 64
+    }
   }
 ];
 
@@ -222,7 +254,7 @@ export const productsSeed = [
     pricePerUnit: 28,
     originalPrice: 35,
     stockQuantity: 4500,
-    minOrderQuantity: 10,
+    minOrderQuantity: 1,
     bulkPricingTiers: [
       { minQuantity: 50, pricePerUnit: 25, discountPercent: 11 },
       { minQuantity: 200, pricePerUnit: 22, discountPercent: 21 },
@@ -255,7 +287,7 @@ export const productsSeed = [
     pricePerUnit: 22,
     originalPrice: 30,
     stockQuantity: 2800,
-    minOrderQuantity: 15,
+    minOrderQuantity: 1,
     bulkPricingTiers: [
       { minQuantity: 40, pricePerUnit: 20, discountPercent: 9 },
       { minQuantity: 100, pricePerUnit: 18, discountPercent: 18 },
@@ -287,7 +319,7 @@ export const productsSeed = [
     pricePerUnit: 24,
     originalPrice: 28,
     stockQuantity: 6000,
-    minOrderQuantity: 20,
+    minOrderQuantity: 1,
     bulkPricingTiers: [
       { minQuantity: 50, pricePerUnit: 21, discountPercent: 12 },
       { minQuantity: 250, pricePerUnit: 18, discountPercent: 25 }

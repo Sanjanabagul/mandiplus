@@ -15,7 +15,8 @@ import {
   ShieldAlert,
   LogOut,
   Package,
-  Bot
+  Bot,
+  Warehouse
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useCart } from '../context/CartContext.jsx';
@@ -29,7 +30,7 @@ import { LocationModal } from './LocationModal.jsx';
 
 export const Header = () => {
   const navigate = useNavigate();
-  const { user, isAuthenticated, logout, isSeller, isAdmin, isDelivery } = useAuth();
+  const { user, isAuthenticated, logout, isSeller, isAdmin, isDelivery, isHubOperator } = useAuth();
   const { itemCount } = useCart();
   const { wishlistCount } = useWishlist();
   const { language, setLanguage, t } = useLanguage();
@@ -308,6 +309,18 @@ export const Header = () => {
             )}
           </Link>
 
+          {/* Mandi+ Hub Operations Shortcut */}
+          {(isHubOperator || isAdmin) && (
+            <Link
+              to="/hub/operations"
+              className="hidden md:flex items-center gap-1.5 bg-emerald-700/80 hover:bg-emerald-800 border border-emerald-400/30 text-white font-medium px-2.5 py-1.5 rounded text-xs transition-colors shrink-0 shadow-sm"
+              title="Mandi+ Hub Centralized Fulfilment Console"
+            >
+              <Warehouse className="w-3.5 h-3.5 text-yellow-300 shrink-0" />
+              <span>Mandi+ Hub</span>
+            </Link>
+          )}
+
           {/* Admin Portal Header Shortcut */}
           <Link
             to={isAdmin ? "/admin/dashboard" : "/admin/login"}
@@ -378,6 +391,17 @@ export const Header = () => {
                       >
                         <Truck className="w-4 h-4 text-amber-600" />
                         <span>Delivery Hub</span>
+                      </Link>
+                    )}
+
+                    {(isHubOperator || isAdmin) && (
+                      <Link
+                        to="/hub/operations"
+                        onClick={() => setIsAccountOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-emerald-50 text-emerald-700 font-semibold"
+                      >
+                        <Warehouse className="w-4 h-4 text-emerald-600" />
+                        <span>Mandi+ Hub</span>
                       </Link>
                     )}
 

@@ -31,12 +31,27 @@ const productSchema = new mongoose.Schema({
   seller: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false,
+    default: null
   },
   sellerName: {
     type: String,
-    required: true
+    required: false,
+    default: 'Mandi+ Hub Partner Farmers'
   },
+  hub: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Hub',
+    default: null
+  },
+  fulfilledBy: {
+    type: String,
+    default: 'Mandi+ Hub'
+  },
+  sourceFarmers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   images: [{
     type: String,
     default: []
